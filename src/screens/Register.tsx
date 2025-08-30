@@ -1,27 +1,38 @@
-import { View, Text, Pressable, TextInput, Animated, Easing } from 'react-native';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { View, Text, Pressable, TextInput, Animated, Easing, Image } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import type { ImageSourcePropType } from 'react-native';
 import { useAuth } from '@/hooks/useAuth';
 import LogoTitle from '@/components/LogoTitle';
 import { Ionicons } from '@expo/vector-icons';
 
-function MarqueeRow({ direction = 'rtl' as 'rtl' | 'ltr' }) {
-  // Placeholder blocks (replace with images later if needed)
-  const colors = useMemo(() => ['#a78bfa', '#f59e0b', '#10b981', '#ef4444', '#3b82f6'], []);
-  const items = 12;
-  const itemWidth = 80;
-  const gap = 8;
-  const rowWidth = items * itemWidth + (items - 1) * gap;
+type MarqueeRowProps = {
+  images: ImageSourcePropType[];
+  direction?: 'rtl' | 'ltr';
+  itemSize?: number; // square size in px
+  gap?: number;
+  speed?: number; // px per second
+  borderRadius?: number;
+};
+
+function MarqueeRow({
+  images,
+  direction = 'rtl',
+  itemSize = 80,
+  gap = 8,
+  speed = 40,
+  borderRadius = 10,
+}: MarqueeRowProps) {
+  const items = images.length;
+  const rowWidth = items > 0 ? items * itemSize + Math.max(0, items - 1) * gap : 0;
 
   const translateX = useRef(new Animated.Value(0)).current;
   const loopRef = useRef<Animated.CompositeAnimation | null>(null);
 
   useEffect(() => {
-    // Compute duration to keep constant speed (px/sec)
-    const speed = 40; // px per second
-    const distance = rowWidth + gap; // account for spacing between duplicates
+    if (items === 0 || rowWidth === 0) return;
+    const distance = rowWidth + gap; // include gap between duplicates
     const duration = Math.max(3000, Math.round((distance / speed) * 1000));
 
-    // Reset starting position per direction
     translateX.stopAnimation();
     translateX.setValue(direction === 'rtl' ? 0 : -distance);
 
@@ -39,10 +50,12 @@ function MarqueeRow({ direction = 'rtl' as 'rtl' | 'ltr' }) {
     return () => {
       loopRef.current?.stop?.();
     };
-  }, [direction, rowWidth, translateX]);
+  }, [direction, gap, items, rowWidth, speed, translateX]);
+
+  if (items === 0) return <View style={{ height: itemSize }} />;
 
   return (
-    <View style={{ height: 60, overflow: 'hidden' }}>
+    <View style={{ height: itemSize, overflow: 'hidden' }}>
       <Animated.View
         style={{
           flexDirection: 'row',
@@ -50,20 +63,15 @@ function MarqueeRow({ direction = 'rtl' as 'rtl' | 'ltr' }) {
           transform: [{ translateX }],
         }}
       >
-        {/* duplicate content twice for seamless loop */}
         {[0, 1].map((dup) => (
           <View key={dup} style={{ flexDirection: 'row', gap }}>
-            {Array.from({ length: items }).map((_, i) => (
-              <View key={`${dup}-${i}`}>
-                <View
-                  style={{
-                    width: itemWidth,
-                    height: 60,
-                    borderRadius: 10,
-                    backgroundColor: colors[i % colors.length],
-                  }}
-                />
-              </View>
+            {images.map((src, i) => (
+              <Image
+                key={`${dup}-${i}`}
+                source={src}
+                style={{ width: itemSize, height: itemSize, borderRadius }}
+                resizeMode="cover"
+              />
             ))}
           </View>
         ))}
@@ -105,9 +113,24 @@ export default function Register() {
         <Text style={{ color: '#bbb', marginTop: 8 }}>Welcome! Create AI profile pictures</Text>
       </View>
       <View style={{ gap: 8, marginBottom: 16 }}>
-        <MarqueeRow direction="rtl" />
-        <MarqueeRow direction="ltr" />
-        <MarqueeRow direction="rtl" />
+        {/**
+         * After you add assets, create arrays with 10 images each:
+         * const row1 = [require('../../../assets/register/row1/img01.jpg'), ..., require('../../../assets/register/row1/img10.jpg')];
+         * const row2 = [... row2 images ...];
+         * const row3 = [... row3 images ...];
+         */}
+        {(() => {
+          const row1: ImageSourcePropType[] = [];
+          return <MarqueeRow direction="rtl" images={row1} itemSize={80} />;
+        })()}
+        {(() => {
+          const row2: ImageSourcePropType[] = [];
+          return <MarqueeRow direction="ltr" images={row2} itemSize={80} />;
+        })()}
+        {(() => {
+          const row3: ImageSourcePropType[] = [];
+          return <MarqueeRow direction="rtl" images={row3} itemSize={80} />;
+        })()}
       </View>
 
       <View style={{ gap: 12, marginTop: 16 }}>
