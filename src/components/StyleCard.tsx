@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { StyleItem } from '@/data/styles';
 
@@ -17,14 +17,12 @@ export default memo(function StyleCard({ item, selected, onPress }: Props) {
       accessibilityLabel={`Style ${item.name}${selected ? ' selected' : ''}`}
       style={{ width: 120, marginRight: 12 }}
     >
-      <View
-        style={{
-          height: 140,
-          borderRadius: 12,
-          backgroundColor: item.color,
-          opacity: selected ? 0.6 : 1,
-        }}
-      >
+      <View style={{ height: 140 }}>
+        <Image
+          source={item.image}
+          style={{ width: '100%', height: '100%', borderRadius: 12, opacity: selected ? 0.6 : 1 }}
+          resizeMode="cover"
+        />
         {selected && (
           <View
             style={{

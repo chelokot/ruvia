@@ -4,11 +4,16 @@
   "private": true,
   "main": "index.js",
   "scripts": {
+    "prestart": "npm run generate:styles",
     "start": "expo start",
+    "preandroid": "npm run generate:styles",
     "android": "expo run:android",
+    "preios": "npm run generate:styles",
     "ios": "expo run:ios",
+    "preweb": "npm run generate:styles",
     "web": "expo start --web",
-    "test": "jest"
+    "test": "jest",
+    "generate:styles": "node scripts/generate-styles.js"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.23.1",

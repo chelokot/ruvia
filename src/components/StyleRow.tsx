@@ -25,4 +25,3 @@ export default function StyleRow({ row, selectedIds, onToggle }: Props) {
     </View>
   );
 }
-
