@@ -7,7 +7,7 @@ import { generateStyles } from '@/lib/api';
 export default function Generating() {
   const router = useRouter();
   const { prompt = '', imgUri = '' } = useLocalSearchParams<{ prompt?: string; imgUri?: string }>();
-  const { user, userDoc, setNotNew } = useAuth();
+  const { user } = useAuth();
   const [status, setStatus] = useState('Preparing...');
   const [subStatus, setSubStatus] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
@@ -61,10 +61,6 @@ export default function Generating() {
         const resp = await generateStyles({ prompt: String(prompt), imageUri: String(imgUri), idToken });
         if (!resp.ok || !resp.data) throw new Error(resp.error || 'Failed');
         const urls = resp.data.images.map((i) => i.url);
-        // Mark user as not new after first successful generation
-        if (userDoc?.isNew) {
-          try { await setNotNew(); } catch {}
-        }
         // On web we can keep URLs and let user save/share; on native too
         router.replace({ pathname: '/results', params: { urls: JSON.stringify(urls) } });
       } catch (e: any) {

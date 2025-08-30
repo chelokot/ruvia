@@ -35,7 +35,7 @@ export default function Upload() {
   const [imgUri, setImgUri] = useState<string | null>(null);
   const [imgBase64, setImgBase64] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const { user, userDoc, setNotNew } = useAuth();
+  const { user } = useAuth();
 
   async function pickImage() {
     const res = await ImagePicker.launchImageLibraryAsync({ base64: true, quality: 0.9 });

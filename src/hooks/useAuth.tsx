@@ -1,7 +1,8 @@
 import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, signInWithPopup, signInWithCredential, GoogleAuthProvider, User } from 'firebase/auth';
 import { auth, db, googleProvider } from '@/lib/firebase';
 import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { doc, getDoc, setDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { ensureSession } from '@/lib/api';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
 import { Platform } from 'react-native';
@@ -21,7 +22,6 @@ type AuthContextValue = {
   signinGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   refreshUserDoc: () => Promise<void>;
-  setNotNew: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -43,8 +43,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
       if (u) {
-        await ensureUserDoc(u.uid);
-        await loadUserDoc(u.uid);
+        try {
+          const token = await u.getIdToken();
+          await ensureSession(token);
+        } catch {}
+        const ref = doc(db, 'users', u.uid);
+        const off = onSnapshot(ref, (snap) => {
+          if (snap.exists()) setUserDoc(snap.data() as UserDoc);
+        });
+        return () => off();
       } else {
         setUserDoc(null);
       }
@@ -53,23 +60,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return unsub;
   }, []);
 
-  async function ensureUserDoc(uid: string) {
-    const ref = doc(db, 'users', uid);
-    const snap = await getDoc(ref);
-    if (!snap.exists()) {
-      const data: UserDoc = { balance: 1, isNew: true, createdAt: serverTimestamp() };
-      await setDoc(ref, data);
-    }
-  }
-
-  async function loadUserDoc(uid: string) {
-    const ref = doc(db, 'users', uid);
-    const snap = await getDoc(ref);
-    if (snap.exists()) setUserDoc(snap.data() as UserDoc);
-  }
-
   async function refreshUserDoc() {
-    if (user) await loadUserDoc(user.uid);
+    // no-op; Firestore subscription keeps userDoc fresh
   }
 
   async function signupEmail(email: string, password: string) {
@@ -99,17 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signOut(auth);
   }
 
-  async function setNotNew() {
-    if (!user) return;
-    const ref = doc(db, 'users', user.uid);
-    await updateDoc(ref, { isNew: false });
-    await loadUserDoc(user.uid);
-  }
-
-  const value = useMemo(
-    () => ({ user, userDoc, loading, signupEmail, signinEmail, signinGoogle, logout, refreshUserDoc, setNotNew }),
-    [user, userDoc, loading]
-  );
+  const value = useMemo(() => ({ user, userDoc, loading, signupEmail, signinEmail, signinGoogle, logout, refreshUserDoc }), [user, userDoc, loading]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
@@ -119,4 +101,3 @@ export function useAuth() {
   if (!ctx) throw new Error('useAuth must be used within AuthProvider');
   return ctx;
 }
-

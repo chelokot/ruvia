@@ -57,3 +57,9 @@ export async function getSessionCredits(idToken: string): Promise<number> {
   const data = await res.json();
   return data?.credits ?? 0;
 }
+
+export async function ensureSession(idToken: string): Promise<void> {
+  const url = `${BASE}/session`;
+  const res = await fetch(url, { method: 'POST', headers: { Authorization: idToken } });
+  if (!res.ok) throw new Error('Failed to ensure session');
+}
