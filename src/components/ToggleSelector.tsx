@@ -1,5 +1,5 @@
 import { View, Pressable, Text, Modal } from 'react-native';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
 type Option = { label: string; value: string };
@@ -12,6 +12,8 @@ type Props = {
 
 export default function ToggleSelector({ value, options, onChange }: Props) {
   const [open, setOpen] = useState(false);
+  const triggerRef = useRef<View>(null);
+  const [anchor, setAnchor] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
   const current = options.find((o) => o.value === value) ?? options[0];
 
   function pick(v: string) {
@@ -22,8 +24,19 @@ export default function ToggleSelector({ value, options, onChange }: Props) {
   return (
     <View style={{ position: 'relative', zIndex: 1000 }}>
       <Pressable
+        ref={triggerRef}
         accessibilityRole="button"
-        onPress={() => setOpen((s) => !s)}
+        onPress={() => {
+          try {
+            triggerRef.current?.measureInWindow?.((x, y, w, h) => {
+              setAnchor({ x, y, w, h });
+              setOpen(true);
+            });
+          } catch {
+            setAnchor(null);
+            setOpen(true);
+          }
+        }}
         style={{
           paddingVertical: 8,
           paddingHorizontal: 12,
@@ -40,14 +53,17 @@ export default function ToggleSelector({ value, options, onChange }: Props) {
         <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={16} color="#00e5ff" />
       </Pressable>
 
-      <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
-        <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)' }} onPress={() => setOpen(false)}>
-          {/* Empty to capture outside presses */}
-        </Pressable>
-        <View style={{ position: 'absolute', top: 120, left: 16, right: 16 }}>
+      <Modal visible={open} transparent animationType="none" onRequestClose={() => setOpen(false)}>
+        {/* Backdrop to close when tapping anywhere outside */}
+        <Pressable style={{ flex: 1 }} onPress={() => setOpen(false)} />
+        {/* Anchored dropdown */}
+        <View
+          pointerEvents="box-none"
+          style={{ position: 'absolute', top: (anchor?.y ?? 120) + (anchor?.h ?? 40) + 8, left: anchor?.x ?? 16 }}
+        >
           <View
             style={{
-              marginHorizontal: 'auto' as any,
+              width: (anchor?.w ?? 200),
               borderRadius: 12,
               borderWidth: 1,
               borderColor: '#333',

@@ -11,11 +11,11 @@ export default function Settings() {
         <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>{user?.displayName ?? 'Account'}</Text>
         <Text style={{ color: '#bbb', marginTop: 2 }}>{user?.email ?? ''}</Text>
       </View>
-      <Pressable onPress={() => Linking.openURL('#')} style={{ backgroundColor: '#111', padding: 14, borderRadius: 12, borderColor: '#222', borderWidth: 1 }}>
-        <Text style={{ color: '#fff' }}>Privacy Policy</Text>
-      </Pressable>
       <Pressable onPress={() => router.push('/terms')} style={{ backgroundColor: '#111', padding: 14, borderRadius: 12, borderColor: '#222', borderWidth: 1 }}>
         <Text style={{ color: '#fff' }}>Terms of Use</Text>
+      </Pressable>
+      <Pressable onPress={() => router.push('/privacy')} style={{ backgroundColor: '#111', padding: 14, borderRadius: 12, borderColor: '#222', borderWidth: 1 }}>
+        <Text style={{ color: '#fff' }}>Privacy Policy</Text>
       </Pressable>
       <Pressable onPress={() => logout()} style={{ backgroundColor: '#111', padding: 14, borderRadius: 12, borderColor: '#222', borderWidth: 1, marginTop: 16 }}>
         <Text style={{ color: '#fff' }}>Log out</Text>
