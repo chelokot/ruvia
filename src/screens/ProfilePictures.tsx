@@ -1,12 +1,13 @@
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import LogoTitle from '@/components/LogoTitle';
 import ToggleSelector from '@/components/ToggleSelector';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getStyleRowsByKey, StyleItem } from '@/data/styles';
 import StyleRow from '@/components/StyleRow';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
+import { getMode as getPrefMode, setMode as setPrefMode, getSecondary as getPrefSecondary, setSecondary as setPrefSecondary } from '@/lib/prefs';
 
 type Mode = 'single' | 'dual';
 
@@ -31,6 +32,51 @@ export default function ProfilePictures() {
       { label: 'Other', value: 'other' },
     ];
   }, [mode]);
+
+  // Load persisted preferences on mount
+  useEffect(() => {
+    (async () => {
+      const savedMode = await getPrefMode();
+      const savedSecondary = await getPrefSecondary();
+      if (savedMode) {
+        setMode(savedMode);
+        // validate secondary by mode
+        if (savedSecondary) {
+          const validSingle = ['female', 'male', 'other'];
+          const validDual = ['f+m', 'f+f', 'm+m', 'o+o'];
+          const isValid = savedMode === 'single' ? validSingle.includes(savedSecondary) : validDual.includes(savedSecondary);
+          setSecondary(isValid ? savedSecondary : (savedMode === 'single' ? 'female' : 'f+m'));
+        } else {
+          setSecondary(savedMode === 'single' ? 'female' : 'f+m');
+        }
+      } else {
+        // seed defaults
+        await setPrefMode('single');
+        await setPrefSecondary('female');
+      }
+    })();
+  }, []);
+
+  // Persist when mode changes
+  useEffect(() => {
+    setPrefMode(mode).catch(() => {});
+    // adjust secondary if incompatible
+    const validSingle = ['female', 'male', 'other'];
+    const validDual = ['f+m', 'f+f', 'm+m', 'o+o'];
+    if (mode === 'single' && !validSingle.includes(secondary)) {
+      setSecondary('female');
+      setPrefSecondary('female').catch(() => {});
+    }
+    if (mode === 'dual' && !validDual.includes(secondary)) {
+      setSecondary('f+m');
+      setPrefSecondary('f+m').catch(() => {});
+    }
+  }, [mode]);
+
+  // Persist when secondary changes
+  useEffect(() => {
+    setPrefSecondary(secondary).catch(() => {});
+  }, [secondary]);
 
   function toDatasetKey() {
     if (mode === 'single') {
@@ -91,7 +137,7 @@ export default function ProfilePictures() {
         </View>
         <View style={{ flexDirection: 'row', gap: 12, marginTop: 12 }}>
           <ToggleSelector value={mode} onChange={(v) => setMode(v as Mode)} options={[{ label: 'Single', value: 'single' }, { label: 'Dual', value: 'dual' }]} />
-          <ToggleSelector value={secondary} onChange={setSecondary} options={secondaryOptions} />
+          <ToggleSelector value={secondary} onChange={(v) => setSecondary(v)} options={secondaryOptions} />
         </View>
       </View>
 
