@@ -151,11 +151,11 @@ export default function Register() {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#000', paddingTop: 80, paddingHorizontal: 16 }}>
-      <View style={{ alignItems: 'center', marginBottom: 24 }}>
+      <View style={{ alignItems: 'center', marginBottom: 36 }}>
         <LogoTitle />
-        <Text style={{ color: '#bbb', marginTop: 8 }}>Welcome! Create AI profile pictures</Text>
+        <Text style={{ color: '#bbb', marginTop: 8 }}>Welcome! Get ready for your AI profile pictures</Text>
       </View>
-      <View style={{ gap: 8, marginBottom: 16 }}>
+      <View style={{ gap: 8, marginBottom: 24 }}>
         <MarqueeRow direction="rtl" images={row1} itemSize={90} speed={48} />
         <MarqueeRow direction="ltr" images={row2} itemSize={90} speed={52} />
         <MarqueeRow direction="rtl" images={row3} itemSize={90} speed={50} />
@@ -203,7 +203,7 @@ export default function Register() {
         </Pressable>
         {error && <Text style={{ color: '#f43f5e' }}>{error}</Text>}
         <Pressable onPress={() => setMode(mode === 'signup' ? 'signin' : 'signup')}>
-          <Text style={{ color: '#bbb', textAlign: 'center' }}>
+          <Text style={{ color: '#00e5ff', textAlign: 'center', textDecorationLine: 'underline' }}>
             {mode === 'signup' ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
           </Text>
         </Pressable>
