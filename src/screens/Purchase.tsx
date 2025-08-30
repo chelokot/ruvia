@@ -1,16 +1,103 @@
-import { View, Text, Pressable, Alert } from 'react-native';
+import { View, Text, Pressable, Alert, Image, Animated, Easing } from 'react-native';
 import { confirmPurchase } from '@/lib/api';
 import { Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type Plan = { sku: string; title: string; price: string; credits: number; save?: string };
 const PLANS: Plan[] = [
   { sku: 'ruvia_25_500', title: '25 profile pictures', price: '$5.00', credits: 25 },
-  { sku: 'ruvia_150_3000', title: '150 profile pictures', price: '$30.00', credits: 150, save: 'Save 10%' },
-  { sku: 'ruvia_1000_10000', title: '1000 profile pictures', price: '$100.00', credits: 1000, save: 'Save 35%' },
+  { sku: 'ruvia_150_2000', title: '150 profile pictures', price: '$20.00', credits: 150, save: 'Save 33%' },
+  { sku: 'ruvia_1000_10000', title: '1000 profile pictures', price: '$100.00', credits: 1000, save: 'Save 50%' },
 ];
+
+// Carousel images (same set as on the sign-up screen), combined into one row
+const row1 = [
+  require('../../assets/register/row1/img01.jpg'),
+  require('../../assets/register/row1/img02.jpg'),
+  require('../../assets/register/row1/img03.jpg'),
+  require('../../assets/register/row1/img04.jpg'),
+  require('../../assets/register/row1/img05.jpg'),
+  require('../../assets/register/row1/img06.jpg'),
+  require('../../assets/register/row1/img07.jpg'),
+  require('../../assets/register/row1/img08.jpg'),
+  require('../../assets/register/row1/img09.jpg'),
+  require('../../assets/register/row1/img10.jpg'),
+];
+const row2 = [
+  require('../../assets/register/row2/img01.jpg'),
+  require('../../assets/register/row2/img02.jpg'),
+  require('../../assets/register/row2/img03.jpg'),
+  require('../../assets/register/row2/img04.jpg'),
+  require('../../assets/register/row2/img05.jpg'),
+  require('../../assets/register/row2/img06.jpg'),
+  require('../../assets/register/row2/img07.jpg'),
+  require('../../assets/register/row2/img08.jpg'),
+  require('../../assets/register/row2/img09.jpg'),
+  require('../../assets/register/row2/img10.jpg'),
+];
+const row3 = [
+  require('../../assets/register/row3/img01.jpg'),
+  require('../../assets/register/row3/img02.jpg'),
+  require('../../assets/register/row3/img03.jpg'),
+  require('../../assets/register/row3/img04.jpg'),
+  require('../../assets/register/row3/img05.jpg'),
+  require('../../assets/register/row3/img06.jpg'),
+  require('../../assets/register/row3/img07.jpg'),
+  require('../../assets/register/row3/img08.jpg'),
+  require('../../assets/register/row3/img09.jpg'),
+  require('../../assets/register/row3/img10.jpg'),
+];
+const allImages = [...row1, ...row2, ...row3];
+
+function MarqueeRowSingle({
+  images,
+  itemSize = 90,
+  gap = 8,
+  speed = 50,
+  borderRadius = 10,
+}: { images: any[]; itemSize?: number; gap?: number; speed?: number; borderRadius?: number }) {
+  const items = images.length;
+  const rowWidth = items > 0 ? items * itemSize + Math.max(0, items - 1) * gap : 0;
+  const translateX = useRef(new Animated.Value(0)).current;
+  const animRef = useRef<Animated.CompositeAnimation | null>(null);
+
+  useEffect(() => {
+    if (items === 0 || rowWidth === 0) return;
+    const distance = rowWidth + gap;
+    const duration = Math.max(3000, Math.round((distance / speed) * 1000));
+    const start = () => {
+      translateX.stopAnimation();
+      translateX.setValue(0);
+      const anim = Animated.timing(translateX, {
+        toValue: -distance,
+        duration,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      });
+      animRef.current = anim;
+      anim.start(({ finished }) => { if (finished) start(); });
+    };
+    start();
+    return () => { animRef.current?.stop?.(); };
+  }, [gap, items, rowWidth, speed, translateX]);
+
+  if (items === 0) return null;
+  return (
+    <View style={{ height: itemSize, overflow: 'hidden' }}>
+      <Animated.View style={{ flexDirection: 'row', gap, transform: [{ translateX }] }}>
+        {[0, 1].map((dup) => (
+          <View key={dup} style={{ flexDirection: 'row', gap }}>
+            {images.map((src, i) => (
+              <Image key={`${dup}-${i}`} source={src} style={{ width: itemSize, height: itemSize, borderRadius }} resizeMode="cover" />
+            ))}
+          </View>
+        ))}
+      </Animated.View>
+    </View>
+  );
+}
 
 export default function Purchase() {
   const router = useRouter();
@@ -37,9 +124,12 @@ export default function Purchase() {
         <View style={{ backgroundColor: '#0b0b0b', borderRadius: 12, padding: 16, borderWidth: 1, borderColor: '#111' }}>
           <Text style={{ color: '#fff', fontSize: 20, fontWeight: '800' }}>Buy more generations</Text>
           <Text style={{ color: '#bbb', marginTop: 6 }}>
-            Unlock more AI profile pictures by purchasing credits. Choose a plan below — higher tiers offer better value.
+            Unlock more AI profile pictures by purchasing credits. Choose a pack below — higher tiers offer better value.
           </Text>
         </View>
+
+        {/* Carousel between header and options */}
+        <MarqueeRowSingle images={allImages} />
 
         <View style={{ gap: 12 }}>
           {PLANS.map((p) => {
@@ -70,7 +160,7 @@ export default function Purchase() {
           onPress={() => buy(PLANS.find((p) => p.sku === selected)!)}
           style={{ backgroundColor: '#00e5ff', padding: 14, borderRadius: 12, alignItems: 'center' }}
         >
-          <Text style={{ color: '#000', fontWeight: '800' }}>Pay</Text>
+          <Text style={{ color: '#000', fontWeight: '800' }}>Buy</Text>
         </Pressable>
       </View>
     </View>
