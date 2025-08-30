@@ -90,6 +90,8 @@ export default function Upload() {
     bad2: require('../../assets/examples/single/male/bad2.jpg'),
   }), []);
   const examples = mode === 'single' && variant === 'male' ? maleExamples : femaleExamples;
+  const [tile, setTile] = useState<number | null>(null);
+  const GAP = 8;
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: '#000' }} contentContainerStyle={{ padding: 16, paddingTop: 56 }}>
@@ -99,11 +101,55 @@ export default function Upload() {
         </Pressable>
         <Text style={{ color: '#fff', fontSize: 20, fontWeight: '700' }}>Upload Photo</Text>
       </View>
-      <Text style={{ color: '#bbb', marginBottom: 12 }}>Choose a clear headshot. Good lighting, single subject, neutral background.</Text>
-      <View style={{ flexDirection: 'row', gap: 8, marginBottom: 12 }}>
-        <Image source={examples.good} style={{ width: 60, height: 60, borderRadius: 8 }} resizeMode="cover" />
-        <Image source={examples.bad1} style={{ width: 60, height: 60, borderRadius: 8 }} resizeMode="cover" />
-        <Image source={examples.bad2} style={{ width: 60, height: 60, borderRadius: 8 }} resizeMode="cover" />
+      <Text style={{ color: '#bbb', marginBottom: 12 }}>
+        Choose a clear headshot. Good lighting, single subject, neutral background. Use high resolution with sharp focus and no filters. Ideally match your facial expression to the emotion you want in the results.
+      </Text>
+      <View
+        style={{ flexDirection: 'row', gap: GAP, marginBottom: 12 }}
+        onLayout={(e) => {
+          const w = e.nativeEvent.layout.width;
+          const size = Math.floor((w - 2 * GAP) / 3);
+          if (size > 0) setTile(size);
+        }}
+      >
+        {/* Good example */}
+        <View style={{ width: tile ?? 0 }}>
+          {tile ? (
+            <>
+              <Image
+                source={examples.good}
+                style={{ width: tile, height: tile, borderRadius: 10, borderWidth: 2, borderColor: '#10b981' }}
+                resizeMode="cover"
+              />
+              <Text style={{ color: '#10b981', fontSize: 11, textAlign: 'center', marginTop: 4 }}>Good</Text>
+            </>
+          ) : null}
+        </View>
+        {/* Bad examples */}
+        <View style={{ width: tile ?? 0 }}>
+          {tile ? (
+            <>
+              <Image
+                source={examples.bad1}
+                style={{ width: tile, height: tile, borderRadius: 10, borderWidth: 2, borderColor: '#ef4444' }}
+                resizeMode="cover"
+              />
+              <Text style={{ color: '#ef4444', fontSize: 11, textAlign: 'center', marginTop: 4 }}>Bad</Text>
+            </>
+          ) : null}
+        </View>
+        <View style={{ width: tile ?? 0 }}>
+          {tile ? (
+            <>
+              <Image
+                source={examples.bad2}
+                style={{ width: tile, height: tile, borderRadius: 10, borderWidth: 2, borderColor: '#ef4444' }}
+                resizeMode="cover"
+              />
+              <Text style={{ color: '#ef4444', fontSize: 11, textAlign: 'center', marginTop: 4 }}>Bad</Text>
+            </>
+          ) : null}
+        </View>
       </View>
       <Text style={{ color: '#bbb', marginBottom: 12 }}>Restrictions: do not upload photos of others without permission, images of minors, or nudity.</Text>
 
