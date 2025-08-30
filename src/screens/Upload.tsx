@@ -6,7 +6,6 @@ import * as FileSystem from 'expo-file-system';
 import { getStyleRowsByKey } from '@/data/styles';
 import { generateStyles } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
-import { useEffect } from 'react';
 import { Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -38,10 +37,6 @@ export default function Upload() {
   const [loading, setLoading] = useState(false);
   const { userDoc, setNotNew } = useAuth();
 
-  useEffect(() => {
-    if (userDoc?.isNew) setNotNew().catch(() => {});
-  }, [userDoc?.isNew]);
-
   async function pickImage() {
     const res = await ImagePicker.launchImageLibraryAsync({ base64: true, quality: 0.9 });
     if (!res.canceled) {
@@ -70,6 +65,10 @@ export default function Upload() {
           a.download = `ruvia-${i + 1}.png`;
           a.click();
         }
+      }
+      // Mark user as not new after first successful generation
+      if (userDoc?.isNew) {
+        try { await setNotNew(); } catch {}
       }
       router.replace({ pathname: '/results', params: { uris: JSON.stringify(savedUris) } });
     } catch (e: any) {
@@ -102,7 +101,7 @@ export default function Upload() {
         <Text style={{ color: '#fff', fontSize: 20, fontWeight: '700' }}>Upload Photo</Text>
       </View>
       <Text style={{ color: '#bbb', marginBottom: 12 }}>
-        Choose a clear headshot. Good lighting, single subject, neutral background. Use high resolution with sharp focus and no filters. Ideally match your facial expression to the emotion you want in the results.
+        {`Choose a clear headshot.\nGood lighting, single subject, neutral background.\nIdeally match your facial expression to the emotion you want in the results.`}
       </Text>
       <View
         style={{ flexDirection: 'row', gap: GAP, marginBottom: 12 }}
