@@ -7,7 +7,6 @@ export default function Settings() {
   const { logout, user } = useAuth();
   return (
     <View style={{ flex: 1, backgroundColor: '#000', paddingTop: 56, paddingHorizontal: 16, gap: 12 }}>
-      <Text style={{ color: '#fff', fontSize: 20, fontWeight: '700' }}>Settings</Text>
       <View style={{ alignItems: 'center', marginBottom: 8, marginTop: 4 }}>
         <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>{user?.displayName ?? 'Account'}</Text>
         <Text style={{ color: '#bbb', marginTop: 2 }}>{user?.email ?? ''}</Text>

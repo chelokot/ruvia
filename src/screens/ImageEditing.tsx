@@ -20,7 +20,7 @@ export default function ImageEditing() {
         <Pressable accessibilityRole="button" onPress={askNotify} style={{ backgroundColor: '#00e5ff', padding: 14, borderRadius: 12, alignSelf: 'center' }}>
           <Text style={{ color: '#000', fontWeight: '700' }}>Notify me when available</Text>
         </Pressable>
-        <View style={{ gap: 8, width: '90%', maxWidth: 520 }}>
+        <View style={{ gap: 8, width: '90%', maxWidth: 520, marginTop: 16 }}>
           <Text style={{ color: '#fff' }}>Tell us what features you’d like:</Text>
           <TextInput
             placeholder="Your suggestions"
@@ -33,16 +33,18 @@ export default function ImageEditing() {
           />
           <Pressable
             accessibilityRole="button"
+            disabled={!suggestion.trim()}
             onPress={async () => {
+              const message = suggestion.trim();
+              setSuggestion('');
               try {
-                await sendFeedback(suggestion.trim());
-                setSuggestion('');
+                await sendFeedback(message);
                 Alert.alert('Thank you!', 'Your suggestion has been sent.');
               } catch (e: any) {
                 Alert.alert('Failed to send', e?.message ?? 'Unknown error');
               }
             }}
-            style={{ backgroundColor: '#00e5ff', padding: 12, borderRadius: 10, alignSelf: 'flex-start' }}
+            style={{ backgroundColor: suggestion.trim() ? '#00e5ff' : '#222', padding: 12, borderRadius: 10, alignSelf: 'stretch' }}
           >
             <Text style={{ color: '#000', fontWeight: '700' }}>Send</Text>
           </Pressable>

@@ -64,8 +64,8 @@ export default function ProfilePictures() {
           <View style={{ flex: 1 }} />
           <Pressable accessibilityRole="button" onPress={() => router.push('/purchase')} style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <Text style={{ color: '#fff' }}>Balance: {balance}</Text>
-            <View style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: '#00e5ff', justifyContent: 'center', alignItems: 'center' }}>
-              <Ionicons name="add" size={18} color="#000" />
+            <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: '#00e5ff', justifyContent: 'center', alignItems: 'center' }}>
+              <Ionicons name="add" size={16} color="#000" />
             </View>
           </Pressable>
         </View>
@@ -97,4 +97,3 @@ export default function ProfilePictures() {
     </View>
   );
 }
-
