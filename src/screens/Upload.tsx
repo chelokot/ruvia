@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { View, Text, Image, Pressable, Alert, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
-import { STYLE_ROWS } from '@/data/styles';
+import { getStyleRowsByKey } from '@/data/styles';
 import { generateStyles } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect } from 'react';
@@ -11,11 +11,12 @@ import { Platform } from 'react-native';
 
 export default function Upload() {
   const router = useRouter();
-  const { ids = '' } = useLocalSearchParams<{ ids: string }>();
+  const { ids = '', ds } = useLocalSearchParams<{ ids: string; ds?: string }>();
   const idSet = useMemo(() => new Set((ids as string).split(',').filter(Boolean)), [ids]);
   const prompts = useMemo(() => {
     const arr: string[] = [];
-    STYLE_ROWS.forEach((r) => r.items.forEach((i) => { if (idSet.has(i.id)) arr.push(i.prompt); }));
+    const rows = getStyleRowsByKey(ds);
+    rows.forEach((r) => r.items.forEach((i) => { if (idSet.has(i.id)) arr.push(i.prompt); }));
     return arr;
   }, [idSet]);
   const [imgUri, setImgUri] = useState<string | null>(null);

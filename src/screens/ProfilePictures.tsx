@@ -2,7 +2,7 @@ import { View, Text, Pressable, ScrollView } from 'react-native';
 import LogoTitle from '@/components/LogoTitle';
 import ToggleSelector from '@/components/ToggleSelector';
 import { useMemo, useState } from 'react';
-import { STYLE_ROWS, StyleItem } from '@/data/styles';
+import { getStyleRowsByKey, StyleItem } from '@/data/styles';
 import StyleRow from '@/components/StyleRow';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -31,12 +31,31 @@ export default function ProfilePictures() {
     ];
   }, [mode]);
 
+  function toDatasetKey() {
+    if (mode === 'single') {
+      const v = secondary === 'female' ? 'Female' : secondary === 'male' ? 'Male' : 'Other';
+      return `Single/${v}`;
+    }
+    // dual variants use short codes like f+m, f+f, m+m, o+o
+    const map: Record<string, string> = {
+      'f+m': 'Female+Male',
+      'f+f': 'Female+Female',
+      'm+m': 'Male+Male',
+      'o+o': 'Other+Other',
+    };
+    const v = map[secondary] ?? 'Female+Male';
+    return `Dual/${v}`;
+  }
+
+  const datasetKey = toDatasetKey();
+  const rows = getStyleRowsByKey(datasetKey);
+
   const [selected, setSelected] = useState<Record<string, StyleItem>>({});
   const selectedCount = Object.keys(selected).length;
 
   function toggle(item: StyleItem) {
     if (isNew && selectedCount === 0) {
-      router.push({ pathname: '/upload', params: { ids: item.id } });
+      router.push({ pathname: '/upload', params: { ids: item.id, ds: datasetKey } });
       return;
     }
     setSelected((prev) => {
@@ -53,7 +72,7 @@ export default function ProfilePictures() {
 
   function continueFlow() {
     const ids = Object.keys(selected).join(',');
-    router.push({ pathname: '/upload', params: { ids } });
+    router.push({ pathname: '/upload', params: { ids, ds: datasetKey } });
   }
 
   return (
@@ -76,7 +95,7 @@ export default function ProfilePictures() {
       </View>
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16 }}>
-        {STYLE_ROWS.map((row) => (
+        {rows.map((row) => (
           <StyleRow key={row.id} row={row} selectedIds={new Set(Object.keys(selected))} onToggle={toggle} />)
         )}
       </ScrollView>
