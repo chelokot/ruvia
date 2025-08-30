@@ -8,6 +8,7 @@ import { generateStyles } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function Upload() {
   const router = useRouter();
@@ -78,14 +79,31 @@ export default function Upload() {
     }
   }
 
+  const femaleExamples = useMemo(() => ({
+    good: require('../../assets/examples/single/female/good.jpg'),
+    bad1: require('../../assets/examples/single/female/bad1.jpg'),
+    bad2: require('../../assets/examples/single/female/bad2.jpg'),
+  }), []);
+  const maleExamples = useMemo(() => ({
+    good: require('../../assets/examples/single/male/good.jpg'),
+    bad1: require('../../assets/examples/single/male/bad1.jpg'),
+    bad2: require('../../assets/examples/single/male/bad2.jpg'),
+  }), []);
+  const examples = mode === 'single' && variant === 'male' ? maleExamples : femaleExamples;
+
   return (
     <ScrollView style={{ flex: 1, backgroundColor: '#000' }} contentContainerStyle={{ padding: 16, paddingTop: 56 }}>
-      <Text style={{ color: '#fff', fontSize: 20, fontWeight: '700', marginBottom: 8 }}>Upload Photo</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+        <Pressable onPress={() => router.back()} accessibilityRole="button" style={{ padding: 6, marginRight: 8 }}>
+          <Ionicons name="chevron-back" size={22} color="#fff" />
+        </Pressable>
+        <Text style={{ color: '#fff', fontSize: 20, fontWeight: '700' }}>Upload Photo</Text>
+      </View>
       <Text style={{ color: '#bbb', marginBottom: 12 }}>Choose a clear headshot. Good lighting, single subject, neutral background.</Text>
       <View style={{ flexDirection: 'row', gap: 8, marginBottom: 12 }}>
-        <View style={{ width: 60, height: 60, backgroundColor: '#10b981', borderRadius: 8 }} />
-        <View style={{ width: 60, height: 60, backgroundColor: '#ef4444', borderRadius: 8 }} />
-        <View style={{ width: 60, height: 60, backgroundColor: '#ef4444', borderRadius: 8 }} />
+        <Image source={examples.good} style={{ width: 60, height: 60, borderRadius: 8 }} resizeMode="cover" />
+        <Image source={examples.bad1} style={{ width: 60, height: 60, borderRadius: 8 }} resizeMode="cover" />
+        <Image source={examples.bad2} style={{ width: 60, height: 60, borderRadius: 8 }} resizeMode="cover" />
       </View>
       <Text style={{ color: '#bbb', marginBottom: 12 }}>Restrictions: do not upload photos of others without permission, images of minors, or nudity.</Text>
 
