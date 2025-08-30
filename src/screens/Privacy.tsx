@@ -9,10 +9,7 @@ export default function Privacy() {
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
         <Pressable
           onPress={() => {
-            // Prefer router back; fallback to settings tab route
-            // @ts-ignore canGoBack is available on expo-router router
-            if (router.canGoBack?.()) router.back();
-            else router.replace('/settings');
+            router.back();
           }}
           style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center' }}
         >
