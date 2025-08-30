@@ -23,8 +23,6 @@ export default memo(function StyleCard({ item, selected, onPress }: Props) {
           borderRadius: 12,
           backgroundColor: item.color,
           opacity: selected ? 0.6 : 1,
-          justifyContent: 'flex-end',
-          padding: 8,
         }}
       >
         {selected && (
@@ -44,9 +42,10 @@ export default memo(function StyleCard({ item, selected, onPress }: Props) {
             <Ionicons name="checkmark" size={16} color="#000" />
           </View>
         )}
-        <Text style={{ color: '#bbb', fontSize: 12 }} numberOfLines={1}>{item.name}</Text>
       </View>
+      <Text style={{ color: '#bbb', fontSize: 12, marginTop: 6, textAlign: 'center' }} numberOfLines={2}>
+        {item.name}
+      </Text>
     </Pressable>
   );
 });
-
