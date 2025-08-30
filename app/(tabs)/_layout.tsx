@@ -6,17 +6,18 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: { backgroundColor: "#000" },
+        tabBarStyle: { backgroundColor: "#000", borderTopWidth: 0, paddingTop: 8, paddingBottom: 8 },
         tabBarActiveTintColor: "#00e5ff",
         tabBarInactiveTintColor: "#999",
+        tabBarItemStyle: { paddingTop: 4, paddingBottom: 2 },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: "Profile Pictures",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="images-outline" size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="images-outline" size={20} color={color} />
           ),
         }}
       />
@@ -24,8 +25,8 @@ export default function TabsLayout() {
         name="image-editing"
         options={{
           title: "Image Editing",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="color-wand-outline" size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="color-wand-outline" size={20} color={color} />
           ),
         }}
       />
@@ -33,12 +34,11 @@ export default function TabsLayout() {
         name="settings"
         options={{
           title: "Settings",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings-outline" size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="settings-outline" size={20} color={color} />
           ),
         }}
       />
     </Tabs>
   );
 }
-

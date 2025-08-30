@@ -21,3 +21,9 @@ export async function confirmPurchase(payload: PurchasePayload) {
   await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
 }
 
+export async function sendFeedback(message: string) {
+  const url = `${BASE}/feedback`;
+  const body = { message };
+  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  if (!res.ok) throw new Error('Failed to send feedback');
+}
