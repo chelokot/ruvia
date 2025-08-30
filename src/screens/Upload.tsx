@@ -50,36 +50,9 @@ export default function Upload() {
     if (!imgBase64) return;
     setLoading(true);
     try {
-      const idToken = await user?.getIdToken?.();
-      if (!idToken) throw new Error('Not authenticated');
       const prompt = prompts.join('\n\n');
-      const resp = await generateStyles({ prompt, imageUri: imgUri!, idToken });
-      if (!resp.ok || !resp.data) throw new Error(resp.error || 'Failed');
-      // Save results to device and navigate (download URLs)
-      const savedUris: string[] = [];
-      for (let i = 0; i < resp.data.images.length; i++) {
-        const url = resp.data.images[i].url;
-        // On native, download to app folder. On web, trigger download directly.
-        if (Platform.OS === 'web') {
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `ruvia-${i + 1}.png`;
-          a.target = '_blank';
-          a.click();
-        } else {
-          const fileUri = `${FileSystem.documentDirectory}ruvia/result-${Date.now()}-${i}.png`;
-          await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}ruvia/`, { intermediates: true }).catch(() => {});
-          const res = await FileSystem.downloadAsync(url, fileUri);
-          savedUris.push(res.uri);
-        }
-      }
-      // Mark user as not new after first successful generation
-      if (userDoc?.isNew) {
-        try { await setNotNew(); } catch {}
-      }
-      if (Platform.OS !== 'web') {
-        router.replace({ pathname: '/results', params: { uris: JSON.stringify(savedUris) } });
-      }
+      // Navigate to a dedicated generating screen which will perform API call
+      router.replace({ pathname: '/generating', params: { prompt, imgUri: imgUri! } });
     } catch (e: any) {
       Alert.alert('Generation failed', e.message ?? 'Please try again later');
     } finally {

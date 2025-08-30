@@ -49,3 +49,11 @@ export async function sendFeedback(message: string) {
   const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   if (!res.ok) throw new Error('Failed to send feedback');
 }
+
+export async function getSessionCredits(idToken: string): Promise<number> {
+  const url = `${BASE}/session`;
+  const res = await fetch(url, { method: 'POST', headers: { Authorization: idToken } });
+  if (!res.ok) throw new Error('Failed to fetch session');
+  const data = await res.json();
+  return data?.credits ?? 0;
+}
