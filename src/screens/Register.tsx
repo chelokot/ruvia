@@ -1,6 +1,7 @@
 import { View, Text, Pressable, TextInput, Animated, Easing, Image } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 import type { ImageSourcePropType } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
 import LogoTitle from '@/components/LogoTitle';
 import { Ionicons } from '@expo/vector-icons';
@@ -124,6 +125,7 @@ function MarqueeRow({
 }
 
 export default function Register() {
+  const router = useRouter();
   const { signupEmail, signinGoogle } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -207,6 +209,17 @@ export default function Register() {
             {mode === 'signup' ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
           </Text>
         </Pressable>
+
+        <View style={{ alignItems: 'center', marginTop: 12 }}>
+          <Text style={{ color: '#666', fontSize: 12 }}>
+            By continuing you agree to our
+            {' '}
+            <Text style={{ color: '#00e5ff', textDecorationLine: 'underline' }} onPress={() => router.push('/terms')}>Terms of Use</Text>
+            {' '}and{' '}
+            <Text style={{ color: '#00e5ff', textDecorationLine: 'underline' }} onPress={() => router.push('/privacy')}>Privacy Policy</Text>
+            .
+          </Text>
+        </View>
       </View>
     </View>
   );

@@ -43,7 +43,7 @@ export default memo(function StyleCard({ item, selected, onPress }: Props) {
           </View>
         )}
       </View>
-      <Text style={{ color: '#bbb', fontSize: 12, marginTop: 6, textAlign: 'center' }} numberOfLines={2}>
+      <Text style={{ color: '#bbb', fontSize: 12, marginTop: 8, textAlign: 'center' }} numberOfLines={2}>
         {item.name}
       </Text>
     </Pressable>
