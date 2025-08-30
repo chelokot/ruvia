@@ -13,6 +13,19 @@ export default function Upload() {
   const router = useRouter();
   const { ids = '', ds } = useLocalSearchParams<{ ids: string; ds?: string }>();
   const idSet = useMemo(() => new Set((ids as string).split(',').filter(Boolean)), [ids]);
+  const { mode, variant } = useMemo(() => {
+    const key = (ds ?? '').toString();
+    if (key.startsWith('Single/')) {
+      const v = key.split('/')[1] ?? 'Female';
+      return { mode: 'single' as const, variant: v.toLowerCase() };
+    }
+    if (key.startsWith('Dual/')) {
+      const v = key.split('/')[1] ?? 'Female+Male';
+      return { mode: 'dual' as const, variant: v };
+    }
+    return { mode: 'single' as const, variant: 'female' };
+  }, [ds]);
+
   const prompts = useMemo(() => {
     const arr: string[] = [];
     const rows = getStyleRowsByKey(ds);
@@ -41,7 +54,7 @@ export default function Upload() {
     if (!imgBase64) return;
     setLoading(true);
     try {
-      const { results } = await generateStyles({ imageBase64: imgBase64, prompts, mode: 'single', variant: 'female' });
+      const { results } = await generateStyles({ imageBase64: imgBase64, prompts, mode, variant });
       // Save results to device and navigate
       const savedUris: string[] = [];
       for (let i = 0; i < results.length; i++) {

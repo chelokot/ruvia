@@ -14,7 +14,8 @@ export default function ProfilePictures() {
   const router = useRouter();
   const { userDoc } = useAuth();
   const balance = userDoc?.balance ?? 0;
-  const isNew = userDoc?.isNew ?? false;
+  // Default to true while userDoc is loading/absent to ensure single-flow UX
+  const isNew = userDoc?.isNew ?? true;
   const [mode, setMode] = useState<Mode>('single');
   const [secondary, setSecondary] = useState('female');
   const secondaryOptions = useMemo(() => {
