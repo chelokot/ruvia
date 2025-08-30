@@ -7,7 +7,7 @@ import StyleRow from '@/components/StyleRow';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
-import { getMode as getPrefMode, setMode as setPrefMode, getSecondary as getPrefSecondary, setSecondary as setPrefSecondary } from '@/lib/prefs';
+import { getMode as getPrefMode, setMode as setPrefMode, getSecondary as getPrefSecondary, setSecondary as setPrefSecondary, getCachedMode, getCachedSecondary } from '@/lib/prefs';
 
 type Mode = 'single' | 'dual';
 
@@ -17,8 +17,8 @@ export default function ProfilePictures() {
   const balance = userDoc?.balance ?? 0;
   // Default to true while userDoc is loading/absent to ensure single-flow UX
   const isNew = userDoc?.isNew ?? true;
-  const [mode, setMode] = useState<Mode>('single');
-  const [secondary, setSecondary] = useState('female');
+  const [mode, setMode] = useState<Mode>((getCachedMode() ?? 'single'));
+  const [secondary, setSecondary] = useState((getCachedSecondary() ?? 'female'));
   const secondaryOptions = useMemo(() => {
     if (mode === 'dual') return [
       { label: 'Female+Male', value: 'f+m' },
@@ -38,21 +38,11 @@ export default function ProfilePictures() {
     (async () => {
       const savedMode = await getPrefMode();
       const savedSecondary = await getPrefSecondary();
-      if (savedMode) {
-        setMode(savedMode);
-        // validate secondary by mode
-        if (savedSecondary) {
-          const validSingle = ['female', 'male', 'other'];
-          const validDual = ['f+m', 'f+f', 'm+m', 'o+o'];
-          const isValid = savedMode === 'single' ? validSingle.includes(savedSecondary) : validDual.includes(savedSecondary);
-          setSecondary(isValid ? savedSecondary : (savedMode === 'single' ? 'female' : 'f+m'));
-        } else {
-          setSecondary(savedMode === 'single' ? 'female' : 'f+m');
-        }
-      } else {
-        // seed defaults
-        await setPrefMode('single');
-        await setPrefSecondary('female');
+      if (!savedMode) {
+        await setPrefMode(mode);
+      }
+      if (!savedSecondary) {
+        await setPrefSecondary(secondary);
       }
     })();
   }, []);
