@@ -1,25 +1,74 @@
-import { View, Text, Pressable, TextInput, Platform, ScrollView } from 'react-native';
-import { useState } from 'react';
+import { View, Text, Pressable, TextInput, Animated, Easing } from 'react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import LogoTitle from '@/components/LogoTitle';
 import { Ionicons } from '@expo/vector-icons';
 
-function CarouselRow({ direction = 'left' as 'left' | 'right' }) {
-  // Placeholder row using colored blocks
-  const colors = ['#a78bfa', '#f59e0b', '#10b981', '#ef4444', '#3b82f6'];
+function MarqueeRow({ direction = 'rtl' as 'rtl' | 'ltr' }) {
+  // Placeholder blocks (replace with images later if needed)
+  const colors = useMemo(() => ['#a78bfa', '#f59e0b', '#10b981', '#ef4444', '#3b82f6'], []);
+  const items = 12;
+  const itemWidth = 80;
+  const gap = 8;
+  const rowWidth = items * itemWidth + (items - 1) * gap;
+
+  const translateX = useRef(new Animated.Value(0)).current;
+  const loopRef = useRef<Animated.CompositeAnimation | null>(null);
+
+  useEffect(() => {
+    // Compute duration to keep constant speed (px/sec)
+    const speed = 40; // px per second
+    const distance = rowWidth + gap; // account for spacing between duplicates
+    const duration = Math.max(3000, Math.round((distance / speed) * 1000));
+
+    // Reset starting position per direction
+    translateX.stopAnimation();
+    translateX.setValue(direction === 'rtl' ? 0 : -distance);
+
+    const anim = Animated.loop(
+      Animated.timing(translateX, {
+        toValue: direction === 'rtl' ? -distance : 0,
+        duration,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      })
+    );
+    loopRef.current = anim;
+    anim.start();
+
+    return () => {
+      loopRef.current?.stop?.();
+    };
+  }, [direction, rowWidth, translateX]);
+
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{ gap: 8, paddingHorizontal: 8 }}
-      style={{ transform: [{ scaleX: direction === 'left' ? 1 : -1 }] }}
-    >
-      {Array.from({ length: 12 }).map((_, i) => (
-        <View key={i} style={{ transform: [{ scaleX: direction === 'left' ? 1 : -1 }] }}>
-          <View style={{ width: 80, height: 60, borderRadius: 10, backgroundColor: colors[i % colors.length] }} />
-        </View>
-      ))}
-    </ScrollView>
+    <View style={{ height: 60, overflow: 'hidden' }}>
+      <Animated.View
+        style={{
+          flexDirection: 'row',
+          gap,
+          transform: [{ translateX }],
+        }}
+      >
+        {/* duplicate content twice for seamless loop */}
+        {[0, 1].map((dup) => (
+          <View key={dup} style={{ flexDirection: 'row', gap }}>
+            {Array.from({ length: items }).map((_, i) => (
+              <View key={`${dup}-${i}`}>
+                <View
+                  style={{
+                    width: itemWidth,
+                    height: 60,
+                    borderRadius: 10,
+                    backgroundColor: colors[i % colors.length],
+                  }}
+                />
+              </View>
+            ))}
+          </View>
+        ))}
+      </Animated.View>
+    </View>
   );
 }
 
@@ -56,9 +105,9 @@ export default function Register() {
         <Text style={{ color: '#bbb', marginTop: 8 }}>Welcome! Create AI profile pictures</Text>
       </View>
       <View style={{ gap: 8, marginBottom: 16 }}>
-        <CarouselRow direction="left" />
-        <CarouselRow direction="right" />
-        <CarouselRow direction="left" />
+        <MarqueeRow direction="rtl" />
+        <MarqueeRow direction="ltr" />
+        <MarqueeRow direction="rtl" />
       </View>
 
       <View style={{ gap: 12, marginTop: 16 }}>
@@ -111,4 +160,3 @@ export default function Register() {
     </View>
   );
 }
-
