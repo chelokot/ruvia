@@ -5,6 +5,46 @@ import { useAuth } from '@/hooks/useAuth';
 import LogoTitle from '@/components/LogoTitle';
 import { Ionicons } from '@expo/vector-icons';
 
+// Local image sets: 10 squares per row
+const row1 = [
+  require('../../../assets/register/row1/1.jpg'),
+  require('../../../assets/register/row1/2.jpg'),
+  require('../../../assets/register/row1/3.jpg'),
+  require('../../../assets/register/row1/4.jpg'),
+  require('../../../assets/register/row1/5.jpg'),
+  require('../../../assets/register/row1/6.jpg'),
+  require('../../../assets/register/row1/7.jpg'),
+  require('../../../assets/register/row1/8.jpg'),
+  require('../../../assets/register/row1/9.jpg'),
+  require('../../../assets/register/row1/10.jpg'),
+];
+
+const row2 = [
+  require('../../../assets/register/row2/11.jpg'),
+  require('../../../assets/register/row2/12.jpg'),
+  require('../../../assets/register/row2/13.jpg'),
+  require('../../../assets/register/row2/14.jpg'),
+  require('../../../assets/register/row2/15.jpg'),
+  require('../../../assets/register/row2/16.jpg'),
+  require('../../../assets/register/row2/17.jpg'),
+  require('../../../assets/register/row2/18.jpg'),
+  require('../../../assets/register/row2/19.jpg'),
+  require('../../../assets/register/row2/20.jpg'),
+];
+
+const row3 = [
+  require('../../../assets/register/row3/21.jpg'),
+  require('../../../assets/register/row3/22.jpg'),
+  require('../../../assets/register/row3/23.jpg'),
+  require('../../../assets/register/row3/24.jpg'),
+  require('../../../assets/register/row3/25.jpg'),
+  require('../../../assets/register/row3/26.jpg'),
+  require('../../../assets/register/row3/27.jpg'),
+  require('../../../assets/register/row3/28.jpg'),
+  require('../../../assets/register/row3/29.jpg'),
+  require('../../../assets/register/row3/30.jpg'),
+];
+
 type MarqueeRowProps = {
   images: ImageSourcePropType[];
   direction?: 'rtl' | 'ltr';
@@ -113,24 +153,9 @@ export default function Register() {
         <Text style={{ color: '#bbb', marginTop: 8 }}>Welcome! Create AI profile pictures</Text>
       </View>
       <View style={{ gap: 8, marginBottom: 16 }}>
-        {/**
-         * After you add assets, create arrays with 10 images each:
-         * const row1 = [require('../../../assets/register/row1/img01.jpg'), ..., require('../../../assets/register/row1/img10.jpg')];
-         * const row2 = [... row2 images ...];
-         * const row3 = [... row3 images ...];
-         */}
-        {(() => {
-          const row1: ImageSourcePropType[] = [];
-          return <MarqueeRow direction="rtl" images={row1} itemSize={80} />;
-        })()}
-        {(() => {
-          const row2: ImageSourcePropType[] = [];
-          return <MarqueeRow direction="ltr" images={row2} itemSize={80} />;
-        })()}
-        {(() => {
-          const row3: ImageSourcePropType[] = [];
-          return <MarqueeRow direction="rtl" images={row3} itemSize={80} />;
-        })()}
+        <MarqueeRow direction="rtl" images={row1} itemSize={80} />
+        <MarqueeRow direction="ltr" images={row2} itemSize={80} />
+        <MarqueeRow direction="rtl" images={row3} itemSize={80} />
       </View>
 
       <View style={{ gap: 12, marginTop: 16 }}>
