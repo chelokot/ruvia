@@ -14,7 +14,7 @@ export default function Generating() {
   // Simple progress bar
   const progress = useRef(new Animated.Value(0)).current;
   useEffect(() => {
-    Animated.timing(progress, { toValue: 1, duration: 12000, easing: Easing.inOut(Easing.ease), useNativeDriver: false }).start();
+    Animated.timing(progress, { toValue: 1, duration: 24000, easing: Easing.inOut(Easing.ease), useNativeDriver: false }).start();
   }, [progress]);
 
   // Rotating statuses

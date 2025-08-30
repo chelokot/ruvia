@@ -62,19 +62,44 @@ export default function Results() {
       </View>
       <ScrollView contentContainerStyle={{ padding: 16, gap: 16 }}>
         {list.map((uri, i) => (
-          <View key={i} style={{ gap: 8 }}>
-            <Image source={{ uri }} style={{ width: '100%', height: 320, borderRadius: 12 }} />
-            <View style={{ flexDirection: 'row', gap: 8 }}>
-              <Pressable onPress={() => saveImage(uri)} style={{ flex: 1, backgroundColor: '#111', borderColor: '#222', borderWidth: 1, padding: 12, borderRadius: 10, alignItems: 'center' }}>
-                <Text style={{ color: '#fff' }}>Save</Text>
-              </Pressable>
-              <Pressable onPress={() => shareImage(uri)} style={{ flex: 1, backgroundColor: '#00e5ff', padding: 12, borderRadius: 10, alignItems: 'center' }}>
-                <Text style={{ color: '#000', fontWeight: '700' }}>Share</Text>
-              </Pressable>
-            </View>
-          </View>
+          <ResultItem key={i} uri={uri} onSave={() => saveImage(uri)} onShare={() => shareImage(uri)} />
         ))}
       </ScrollView>
+    </View>
+  );
+}
+
+import { useState } from 'react';
+type ItemProps = { uri: string; onSave: () => void; onShare: () => void };
+function ResultItem({ uri, onSave, onShare }: ItemProps) {
+  const [w, setW] = useState<number>(0);
+  const [ratio, setRatio] = useState<number | null>(null);
+
+  useEffect(() => {
+    Image.getSize(
+      uri,
+      (iw, ih) => setRatio(ih > 0 ? iw / ih : 1),
+      () => setRatio(1),
+    );
+  }, [uri]);
+
+  const height = ratio && w ? Math.round(w / ratio) : 320;
+
+  return (
+    <View
+      onLayout={(e) => setW(e.nativeEvent.layout.width)}
+      style={{ borderRadius: 12, overflow: 'hidden', position: 'relative' }}
+    >
+      <Image source={{ uri }} style={{ width: '100%', height }} resizeMode="cover" />
+      {/* Overlay icons */}
+      <View style={{ position: 'absolute', left: 0, right: 0, bottom: 8, paddingHorizontal: 8, flexDirection: 'row', justifyContent: 'space-between' }}>
+        <Pressable onPress={onSave} accessibilityRole="button" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }}>
+          <Ionicons name="download-outline" size={20} color="#fff" />
+        </Pressable>
+        <Pressable onPress={onShare} accessibilityRole="button" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }}>
+          <Ionicons name="share-social-outline" size={20} color="#fff" />
+        </Pressable>
+      </View>
     </View>
   );
 }
