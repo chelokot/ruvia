@@ -35,7 +35,7 @@ export default function Upload() {
   const [imgUri, setImgUri] = useState<string | null>(null);
   const [imgBase64, setImgBase64] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const { userDoc, setNotNew } = useAuth();
+  const { user, userDoc, setNotNew } = useAuth();
 
   async function pickImage() {
     const res = await ImagePicker.launchImageLibraryAsync({ base64: true, quality: 0.9 });
@@ -50,27 +50,36 @@ export default function Upload() {
     if (!imgBase64) return;
     setLoading(true);
     try {
-      const { results } = await generateStyles({ imageBase64: imgBase64, prompts, mode, variant });
-      // Save results to device and navigate
+      const idToken = await user?.getIdToken?.();
+      if (!idToken) throw new Error('Not authenticated');
+      const prompt = prompts.join('\n\n');
+      const resp = await generateStyles({ prompt, imageUri: imgUri!, idToken });
+      if (!resp.ok || !resp.data) throw new Error(resp.error || 'Failed');
+      // Save results to device and navigate (download URLs)
       const savedUris: string[] = [];
-      for (let i = 0; i < results.length; i++) {
-        const b64 = results[i];
-        const fileUri = `${FileSystem.documentDirectory}ruvia/result-${Date.now()}-${i}.png`;
-        await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}ruvia/`, { intermediates: true }).catch(() => {});
-        await FileSystem.writeAsStringAsync(fileUri, b64, { encoding: FileSystem.EncodingType.Base64 });
-        savedUris.push(fileUri);
+      for (let i = 0; i < resp.data.images.length; i++) {
+        const url = resp.data.images[i].url;
+        // On native, download to app folder. On web, trigger download directly.
         if (Platform.OS === 'web') {
           const a = document.createElement('a');
-          a.href = `data:image/png;base64,${b64}`;
+          a.href = url;
           a.download = `ruvia-${i + 1}.png`;
+          a.target = '_blank';
           a.click();
+        } else {
+          const fileUri = `${FileSystem.documentDirectory}ruvia/result-${Date.now()}-${i}.png`;
+          await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}ruvia/`, { intermediates: true }).catch(() => {});
+          const res = await FileSystem.downloadAsync(url, fileUri);
+          savedUris.push(res.uri);
         }
       }
       // Mark user as not new after first successful generation
       if (userDoc?.isNew) {
         try { await setNotNew(); } catch {}
       }
-      router.replace({ pathname: '/results', params: { uris: JSON.stringify(savedUris) } });
+      if (Platform.OS !== 'web') {
+        router.replace({ pathname: '/results', params: { uris: JSON.stringify(savedUris) } });
+      }
     } catch (e: any) {
       Alert.alert('Generation failed', e.message ?? 'Please try again later');
     } finally {
