@@ -1,0 +1,34 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Expo / React Native
+.expo/
+.expo-shared/
+dist/
+web-build/
+build/
+
+# Native folders (if generated later)
+android/
+ios/
+
+# Test coverage
+coverage/
+
+# Environment files (keep example only)
+.env
+.env.*
+!.env.example
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Misc
+expo-env.d.ts
