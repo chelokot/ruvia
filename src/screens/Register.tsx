@@ -66,29 +66,32 @@ function MarqueeRow({
   const rowWidth = items > 0 ? items * itemSize + Math.max(0, items - 1) * gap : 0;
 
   const translateX = useRef(new Animated.Value(0)).current;
-  const loopRef = useRef<Animated.CompositeAnimation | null>(null);
+  const animRef = useRef<Animated.CompositeAnimation | null>(null);
 
   useEffect(() => {
     if (items === 0 || rowWidth === 0) return;
     const distance = rowWidth + gap; // include gap between duplicates
     const duration = Math.max(3000, Math.round((distance / speed) * 1000));
 
-    translateX.stopAnimation();
-    translateX.setValue(direction === 'rtl' ? 0 : -distance);
-
-    const anim = Animated.loop(
-      Animated.timing(translateX, {
+    const start = () => {
+      translateX.stopAnimation();
+      translateX.setValue(direction === 'rtl' ? 0 : -distance);
+      const anim = Animated.timing(translateX, {
         toValue: direction === 'rtl' ? -distance : 0,
         duration,
         easing: Easing.linear,
         useNativeDriver: true,
-      })
-    );
-    loopRef.current = anim;
-    anim.start();
+      });
+      animRef.current = anim;
+      anim.start(({ finished }) => {
+        if (finished) start(); // seamless restart
+      });
+    };
+
+    start();
 
     return () => {
-      loopRef.current?.stop?.();
+      animRef.current?.stop?.();
     };
   }, [direction, gap, items, rowWidth, speed, translateX]);
 
@@ -153,9 +156,9 @@ export default function Register() {
         <Text style={{ color: '#bbb', marginTop: 8 }}>Welcome! Create AI profile pictures</Text>
       </View>
       <View style={{ gap: 8, marginBottom: 16 }}>
-        <MarqueeRow direction="rtl" images={row1} itemSize={80} />
-        <MarqueeRow direction="ltr" images={row2} itemSize={80} />
-        <MarqueeRow direction="rtl" images={row3} itemSize={80} />
+        <MarqueeRow direction="rtl" images={row1} itemSize={90} speed={48} />
+        <MarqueeRow direction="ltr" images={row2} itemSize={90} speed={52} />
+        <MarqueeRow direction="rtl" images={row3} itemSize={90} speed={50} />
       </View>
 
       <View style={{ gap: 12, marginTop: 16 }}>
