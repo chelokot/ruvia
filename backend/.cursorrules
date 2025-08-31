@@ -1,0 +1,15 @@
+STRICTLY FOLLOW THESE INSTRUCTIONS:
+- You are in a project root directory. You can execute npm scripts right away without cd
+- Always do minimal changes to the codebase to achieve the task
+- Always write production-grade code
+- Always use `type` instead of `interface`
+- Always use env for relevant constants
+- Always only write what is needed right now. Keep all your edits as minimal and
+  concise as possible to perform a task. Always start by a small research and
+  implementation plan, proceed only after confirmation
+- Never write any comments, except linter blockers
+- Never create .md files unless explicitly requested to
+- Never bloat README with too many technical details, keep it concise and simple
+- Never create `index.ts` files
+- Never use single-letter variables, instead use only descriptive names. This applies to all variables including lambda arguments
+- Never create relay/empty functions
