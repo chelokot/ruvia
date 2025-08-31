@@ -31,14 +31,13 @@ export function buildApp() {
   const variables: AppEnv["Variables"] = { auth, db };
 
   const app = new Hono<AppEnv>()
-    // CORS first: allow web origins + preflight
+    // CORS first: wide open per request
     .use("*", cors({
-      origin: [
-        "https://www.ruvia.art",
-        "https://ruvia.art",
-      ],
-      allowMethods: ["GET", "POST", "OPTIONS"],
-      allowHeaders: ["Authorization", "Content-Type"],
+      origin: "*",
+      allowMethods: ["GET", "POST", "OPTIONS", "PUT", "DELETE", "PATCH"],
+      allowHeaders: ["*"],
+      exposeHeaders: ["*"],
+      maxAge: 86400,
     }))
     // init app variables
     .use("*", createInitMiddleware(variables));
