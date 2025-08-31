@@ -1,4 +1,7 @@
 {
+  "functions": [
+    { "source": "functions", "codebase": "api", "runtime": "nodejs20" }
+  ],
   "hosting": {
     "public": "dist",
     "ignore": [
@@ -9,8 +12,8 @@
     "cleanUrls": true,
     "trailingSlash": false,
     "rewrites": [
+      { "source": "/api{,/**}", "function": { "functionId": "api", "region": "us-central1", "codebase": "api" } },
       { "source": "**", "destination": "/index.html" }
     ]
   }
 }
-
