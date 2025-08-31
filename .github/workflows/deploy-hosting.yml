@@ -23,6 +23,12 @@ jobs:
       - name: Build web
         run: npm run build:web
 
+      - name: Install backend dependencies
+        run: npm ci --prefix backend
+
+      - name: Build backend (TypeScript)
+        run: npm run build --prefix backend
+
       - name: Install Firebase CLI
         run: npm i -g firebase-tools
 
