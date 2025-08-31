@@ -61,14 +61,14 @@ export default function Upload() {
   }
 
   const femaleExamples = useMemo(() => ({
-    good: require('../../assets/examples/single/female/good.jpg'),
-    bad1: require('../../assets/examples/single/female/bad1.jpg'),
-    bad2: require('../../assets/examples/single/female/bad2.jpg'),
+    good: require('../../assets/examples/single/female/good.webp'),
+    bad1: require('../../assets/examples/single/female/bad1.webp'),
+    bad2: require('../../assets/examples/single/female/bad2.webp'),
   }), []);
   const maleExamples = useMemo(() => ({
-    good: require('../../assets/examples/single/male/good.jpg'),
-    bad1: require('../../assets/examples/single/male/bad1.jpg'),
-    bad2: require('../../assets/examples/single/male/bad2.jpg'),
+    good: require('../../assets/examples/single/male/good.webp'),
+    bad1: require('../../assets/examples/single/male/bad1.webp'),
+    bad2: require('../../assets/examples/single/male/bad2.webp'),
   }), []);
   const examples = mode === 'single' && variant === 'male' ? maleExamples : femaleExamples;
   const [tile, setTile] = useState<number | null>(null);
