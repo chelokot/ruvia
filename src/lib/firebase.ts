@@ -11,8 +11,9 @@ const firebaseConfig = {
   appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
 };
 
-const app = getApps().length ? getApps()[0]! : initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const googleProvider = new GoogleAuthProvider();
-
+// Avoid initializing Firebase during static SSR/Expo export on the server.
+const isBrowser = typeof window !== 'undefined';
+const app = isBrowser && (getApps().length ? getApps()[0]! : initializeApp(firebaseConfig));
+export const auth = isBrowser ? getAuth(app as any) : (null as any);
+export const db = isBrowser ? getFirestore(app as any) : (null as any);
+export const googleProvider = isBrowser ? new GoogleAuthProvider() : (null as any);

@@ -1,7 +1,6 @@
 {
   "buildCommand": "npm run build:web",
-  "outputDirectory": ".expo/web-build",
+  "outputDirectory": "dist",
   "cleanUrls": true,
   "trailingSlash": false
 }
-
