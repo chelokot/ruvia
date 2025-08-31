@@ -19,11 +19,6 @@ ios/
 # Test coverage
 coverage/
 
-# Environment files (keep example only)
-.env
-.env.*
-!.env.example
-
 # OS / Editor
 .DS_Store
 Thumbs.db
