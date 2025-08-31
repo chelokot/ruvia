@@ -31,3 +31,11 @@ Thumbs.db
 .idea/
 
 # Misc
+
+# Local EAS inspect
+.eas-inspect/
+.eas-inspect-pre/
+android-assemble2.log
+android-local-assemble.log
+.eas-local-android*.log
+*.txt
