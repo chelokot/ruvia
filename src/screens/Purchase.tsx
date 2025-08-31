@@ -4,9 +4,12 @@ import { Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
+// Loaded dynamically on Android to avoid web build issues
+// import * as InAppPurchases from 'expo-in-app-purchases';
+import { useAuth } from '@/hooks/useAuth';
 
 type Plan = { sku: string; title: string; price: string; credits: number; save?: string };
-const PLANS: Plan[] = [
+const STATIC_PLANS: Plan[] = [
   { sku: 'ruvia_25_500', title: '25 profile pictures', price: '$5.00', credits: 25 },
   { sku: 'ruvia_150_2000', title: '150 profile pictures', price: '$20.00', credits: 150, save: 'Save 33%' },
   { sku: 'ruvia_1000_10000', title: '1000 profile pictures', price: '$100.00', credits: 1000, save: 'Save 50%' },
@@ -14,40 +17,40 @@ const PLANS: Plan[] = [
 
 // Carousel images (same set as on the sign-up screen), combined into one row
 const row1 = [
-  require('../../assets/register/row1/img01.jpg'),
-  require('../../assets/register/row1/img02.jpg'),
-  require('../../assets/register/row1/img03.jpg'),
-  require('../../assets/register/row1/img04.jpg'),
-  require('../../assets/register/row1/img05.jpg'),
-  require('../../assets/register/row1/img06.jpg'),
-  require('../../assets/register/row1/img07.jpg'),
-  require('../../assets/register/row1/img08.jpg'),
-  require('../../assets/register/row1/img09.jpg'),
-  require('../../assets/register/row1/img10.jpg'),
+  require('../../assets/register/row1/img01.webp'),
+  require('../../assets/register/row1/img02.webp'),
+  require('../../assets/register/row1/img03.webp'),
+  require('../../assets/register/row1/img04.webp'),
+  require('../../assets/register/row1/img05.webp'),
+  require('../../assets/register/row1/img06.webp'),
+  require('../../assets/register/row1/img07.webp'),
+  require('../../assets/register/row1/img08.webp'),
+  require('../../assets/register/row1/img09.webp'),
+  require('../../assets/register/row1/img10.webp'),
 ];
 const row2 = [
-  require('../../assets/register/row2/img01.jpg'),
-  require('../../assets/register/row2/img02.jpg'),
-  require('../../assets/register/row2/img03.jpg'),
-  require('../../assets/register/row2/img04.jpg'),
-  require('../../assets/register/row2/img05.jpg'),
-  require('../../assets/register/row2/img06.jpg'),
-  require('../../assets/register/row2/img07.jpg'),
-  require('../../assets/register/row2/img08.jpg'),
-  require('../../assets/register/row2/img09.jpg'),
-  require('../../assets/register/row2/img10.jpg'),
+  require('../../assets/register/row2/img01.webp'),
+  require('../../assets/register/row2/img02.webp'),
+  require('../../assets/register/row2/img03.webp'),
+  require('../../assets/register/row2/img04.webp'),
+  require('../../assets/register/row2/img05.webp'),
+  require('../../assets/register/row2/img06.webp'),
+  require('../../assets/register/row2/img07.webp'),
+  require('../../assets/register/row2/img08.webp'),
+  require('../../assets/register/row2/img09.webp'),
+  require('../../assets/register/row2/img10.webp'),
 ];
 const row3 = [
-  require('../../assets/register/row3/img01.jpg'),
-  require('../../assets/register/row3/img02.jpg'),
-  require('../../assets/register/row3/img03.jpg'),
-  require('../../assets/register/row3/img04.jpg'),
-  require('../../assets/register/row3/img05.jpg'),
-  require('../../assets/register/row3/img06.jpg'),
-  require('../../assets/register/row3/img07.jpg'),
-  require('../../assets/register/row3/img08.jpg'),
-  require('../../assets/register/row3/img09.jpg'),
-  require('../../assets/register/row3/img10.jpg'),
+  require('../../assets/register/row3/img01.webp'),
+  require('../../assets/register/row3/img02.webp'),
+  require('../../assets/register/row3/img03.webp'),
+  require('../../assets/register/row3/img04.webp'),
+  require('../../assets/register/row3/img05.webp'),
+  require('../../assets/register/row3/img06.webp'),
+  require('../../assets/register/row3/img07.webp'),
+  require('../../assets/register/row3/img08.webp'),
+  require('../../assets/register/row3/img09.webp'),
+  require('../../assets/register/row3/img10.webp'),
 ];
 const allImages = [...row1, ...row2, ...row3];
 
@@ -101,14 +104,84 @@ function MarqueeRowSingle({
 
 export default function Purchase() {
   const router = useRouter();
-  const [selected, setSelected] = useState<string>(PLANS[0].sku);
+  const { user } = useAuth();
+  const [selected, setSelected] = useState<string>(STATIC_PLANS[0].sku);
+  const [plans, setPlans] = useState<Plan[]>(STATIC_PLANS);
+  const [loading, setLoading] = useState(false);
+  const iapRef = useRef<any | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    async function init() {
+      if (Platform.OS !== 'android') return;
+      try {
+        const InAppPurchases = (await import('expo-in-app-purchases')).default ?? (await import('expo-in-app-purchases'));
+        iapRef.current = InAppPurchases;
+        await InAppPurchases.connectAsync();
+        const skus = STATIC_PLANS.map(p => p.sku);
+        const { responseCode, results } = await InAppPurchases.getProductsAsync(skus);
+        if (responseCode === InAppPurchases.IAPResponseCode.OK && results && mounted) {
+          const mapped = STATIC_PLANS.map(p => {
+            const storeItem = results.find(r => r.productId === p.sku);
+            return storeItem ? { ...p, title: storeItem.title, price: storeItem.price } : p;
+          });
+          setPlans(mapped);
+        }
+      } catch (e) {
+        // ignore and keep static pricing
+      }
+    }
+    init();
+    return () => {
+      mounted = false;
+      iapRef.current?.disconnectAsync?.().catch(() => {});
+    };
+  }, []);
+
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+    let remove: any | undefined;
+    (async () => {
+      const InAppPurchases = iapRef.current ?? ((await import('expo-in-app-purchases')).default ?? (await import('expo-in-app-purchases')));
+      remove = InAppPurchases.setPurchaseListener(async ({ responseCode, results, errorCode }: any) => {
+        if (responseCode !== InAppPurchases.IAPResponseCode.OK || !results) {
+          if (errorCode) Alert.alert('Purchase failed', String(errorCode));
+          return;
+        }
+        for (const purchase of results) {
+          if (purchase.purchaseState === InAppPurchases.IAPurchaseState.PURCHASED) {
+            try {
+              if (!user) throw new Error('Not signed in');
+              const idToken = await user.getIdToken();
+              await confirmPurchase({ sku: purchase.productId, purchaseToken: purchase.purchaseToken! }, idToken);
+              await InAppPurchases.finishTransactionAsync(purchase, false);
+              Alert.alert('Purchase', 'Thanks! Your credits will update shortly.');
+            } catch (e: any) {
+              // Do not finish transaction so user can retry; but avoid spamming
+              Alert.alert('Purchase failed', e?.message ?? 'Please try again later');
+            }
+          }
+        }
+      });
+    })();
+    return () => {
+      remove?.remove?.();
+    };
+  }, [user]);
+
   async function buy(p: Plan) {
-    // Stub: integrate Play Billing on Android later; call backend regardless
     try {
-      await confirmPurchase({ sku: p.sku, platform: Platform.OS === 'android' ? 'android' : 'web' });
-      Alert.alert('Purchase', 'Thanks! Your balance will update shortly.');
+      if (Platform.OS !== 'android') {
+        Alert.alert('Unavailable', 'Purchases are available on Android via Google Play.');
+        return;
+      }
+      setLoading(true);
+      const InAppPurchases = iapRef.current ?? ((await import('expo-in-app-purchases')).default ?? (await import('expo-in-app-purchases')));
+      await InAppPurchases.purchaseItemAsync(p.sku);
     } catch (e: any) {
       Alert.alert('Purchase failed', e.message ?? 'Please try again later');
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -132,7 +205,7 @@ export default function Purchase() {
         <MarqueeRowSingle images={allImages} />
 
         <View style={{ gap: 12 }}>
-          {PLANS.map((p) => {
+          {plans.map((p) => {
             const active = p.sku === selected;
             return (
               <Pressable key={p.sku} onPress={() => setSelected(p.sku)} style={{ backgroundColor: '#111', borderColor: active ? '#00e5ff' : '#222', borderWidth: 1, borderRadius: 12, padding: 16, flexDirection: 'row', alignItems: 'center' }}>
@@ -157,10 +230,10 @@ export default function Purchase() {
       <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: 16, borderTopColor: '#111', borderTopWidth: 1, backgroundColor: '#000' }}>
         <Pressable
           accessibilityRole="button"
-          onPress={() => buy(PLANS.find((p) => p.sku === selected)!)}
-          style={{ backgroundColor: '#00e5ff', padding: 14, borderRadius: 12, alignItems: 'center' }}
+          onPress={() => buy(plans.find((p) => p.sku === selected)!)}
+          style={{ backgroundColor: loading ? '#0aa' : '#00e5ff', padding: 14, borderRadius: 12, alignItems: 'center', opacity: loading ? 0.7 : 1 }}
         >
-          <Text style={{ color: '#000', fontWeight: '800' }}>Buy</Text>
+          <Text style={{ color: '#000', fontWeight: '800' }}>{loading ? 'Processing…' : 'Buy'}</Text>
         </Pressable>
       </View>
     </View>

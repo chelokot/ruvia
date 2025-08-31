@@ -16,11 +16,6 @@
       "bundler": "metro",
       "output": "static"
     },
-    "extra": {
-      "eas": {
-        "projectId": "00000000-0000-0000-0000-000000000000"
-      }
-    },
     "plugins": [
       "expo-router",
       [
@@ -31,6 +26,24 @@
       ],
       "expo-camera",
       "expo-media-library"
-    ]
+    ],
+    "android": {
+      "package": "com.ruvia.app",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "9cc32638-29cb-42e9-8e8e-400de56278c5"
+      }
+    },
+    "owner": "chipichapacorp"
   }
 }

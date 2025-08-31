@@ -17,15 +17,15 @@ export async function generateStyles(req: GenerateFormRequest): Promise<Generate
   const isWeb = typeof window !== 'undefined' && typeof document !== 'undefined';
   if (isWeb) {
     const blob1 = await uriToBlob(req.imageUri);
-    form.append('image1', blob1, 'image1.jpg');
+    form.append('image1', blob1, 'image1.webp');
     if (req.imageUri2) {
       const blob2 = await uriToBlob(req.imageUri2);
-      form.append('image2', blob2, 'image2.jpg');
+      form.append('image2', blob2, 'image2.webp');
     }
   } else {
     // React Native
-    form.append('image1', { uri: req.imageUri, name: 'image1.jpg', type: 'image/jpeg' } as any);
-    if (req.imageUri2) form.append('image2', { uri: req.imageUri2, name: 'image2.jpg', type: 'image/jpeg' } as any);
+    form.append('image1', { uri: req.imageUri, name: 'image1.webp', type: 'image/jpeg' } as any);
+    if (req.imageUri2) form.append('image2', { uri: req.imageUri2, name: 'image2.webp', type: 'image/jpeg' } as any);
   }
 
   const res = await fetch(url, {
@@ -37,10 +37,16 @@ export async function generateStyles(req: GenerateFormRequest): Promise<Generate
   return res.json();
 }
 
-export type PurchasePayload = { sku: string; receipt?: string; platform: 'android' | 'web' };
-export async function confirmPurchase(payload: PurchasePayload) {
+export type PurchasePayload = { sku: string; purchaseToken: string };
+export async function confirmPurchase(payload: PurchasePayload, idToken: string) {
   const url = `${BASE}/purchase`;
-  await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: idToken },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Failed to confirm purchase');
+  return res.json();
 }
 
 export async function sendFeedback(message: string) {
