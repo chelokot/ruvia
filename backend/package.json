@@ -1,6 +1,10 @@
 {
   "name": "ruvia-be",
   "type": "module",
+  "main": "dist/functions.js",
+  "engines": {
+    "node": "20"
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
@@ -11,7 +15,8 @@
     "@fal-ai/client": "^1.6.2",
     "@hono/node-server": "^1.19.0",
     "dotenv": "^16.4.5",
-    "firebase-admin": "^13.5.0",
+    "firebase-admin": "^12.5.0",
+    "firebase-functions": "^4.9.0",
     "hono": "^4.9.5",
     "googleapis": "^136.0.0"
   },

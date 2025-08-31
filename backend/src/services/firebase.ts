@@ -1,32 +1,35 @@
 import fsp from "node:fs/promises";
 import path from "node:path";
 import type * as firebase from "firebase-admin";
-import { cert, initializeApp } from "firebase-admin/app";
+import { applicationDefault, cert, getApps, initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 
 export function initFirebase(): firebase.auth.Auth {
+  const emulatorHost = process.env.FIREBASE_AUTH_EMULATOR_HOST;
   const projectId = process.env.FIREBASE_PROJECT_ID;
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
   const privateKey = process.env.FIREBASE_PRIVATE_KEY;
 
-  const emulatorHost = process.env.FIREBASE_AUTH_EMULATOR_HOST;
+  const hasExplicitCreds = !!(projectId && clientEmail && privateKey);
 
-  if (!projectId || (!emulatorHost && (!clientEmail || !privateKey))) {
-    throw new Error("Firebase admin env is not set");
-  }
+  const app = getApps().length
+    ? undefined
+    : initializeApp(
+        emulatorHost
+          ? {
+              credential: cert({
+                projectId: projectId || "demo-project",
+                clientEmail: clientEmail || "demo@example.com",
+                privateKey: privateKey || "noop",
+              }),
+              projectId,
+            }
+          : hasExplicitCreds
+            ? { credential: cert({ projectId: projectId!, clientEmail: clientEmail!, privateKey: privateKey! }), projectId }
+            : { credential: applicationDefault(), projectId },
+      );
 
-  const app = initializeApp({
-    credential: emulatorHost
-      ? cert({
-          projectId,
-          clientEmail,
-          privateKey,
-        })
-      : undefined,
-    projectId,
-  });
-
-  return getAuth(app);
+  return getAuth();
 }
 
 export async function injectFirebaseCredentials() {
