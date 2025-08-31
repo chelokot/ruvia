@@ -11,6 +11,7 @@ pnpm-debug.log*
 dist/
 web-build/
 build/
+backend/dist/
 
 # Native folders (if generated later)
 android/
