@@ -16,9 +16,16 @@
     "test": "jest",
     "generate:styles": "node scripts/generate-styles.js",
     "images:webp": "node scripts/convert-to-webp.js",
-    "expo:assets": "node scripts/generate-missing-expo-assets.js"
+    "expo:assets": "node scripts/generate-missing-expo-assets.js",
+    "build:backend:vercel": "git submodule update --init --recursive && cd backend && npm ci && npm run build"
   },
   "dependencies": {
+    "@fal-ai/client": "^1.6.2",
+    "firebase": "^10.12.2",
+    "firebase-admin": "^13.5.0",
+    "hono": "^4.9.5",
+    "mongodb": "^6.19.0",
+    "dotenv": "^16.4.5",
     "@react-native-async-storage/async-storage": "1.23.1",
     "expo": "~51.0.22",
     "expo-auth-session": "~5.5.2",
