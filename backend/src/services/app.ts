@@ -2,6 +2,7 @@ import { serve } from "@hono/node-server";
 import type { Auth } from "firebase-admin/auth";
 import { type Context, Hono } from "hono";
 import { authMiddleware } from "../middleware/auth.js";
+import { cors } from "hono/cors";
 import { createInitMiddleware } from "../middleware/init.js";
 import { generateRoute } from "../routes/generate.js";
 import { sessionRoute } from "../routes/session.js";
@@ -30,12 +31,22 @@ export function buildApp() {
   const variables: AppEnv["Variables"] = { auth, db };
 
   const app = new Hono<AppEnv>()
-    .use("*", createInitMiddleware(variables))
-    .use("*", authMiddleware);
+    // CORS first: allow web origins + preflight
+    .use("*", cors({
+      origin: [
+        "https://www.ruvia.art",
+        "https://ruvia.art",
+      ],
+      allowMethods: ["GET", "POST", "OPTIONS"],
+      allowHeaders: ["Authorization", "Content-Type"],
+    }))
+    // init app variables
+    .use("*", createInitMiddleware(variables));
 
-  app.route("/session", sessionRoute);
-  app.route("/generate", generateRoute);
-  app.route("/purchase", purchaseRoute);
+  // Protected routes only: attach auth on sub-routers to avoid blocking OPTIONS
+  app.route("/session", new Hono<AppEnv>().use("*", authMiddleware).route("/", sessionRoute));
+  app.route("/generate", new Hono<AppEnv>().use("*", authMiddleware).route("/", generateRoute));
+  app.route("/purchase", new Hono<AppEnv>().use("*", authMiddleware).route("/", purchaseRoute));
 
   return app;
 }
