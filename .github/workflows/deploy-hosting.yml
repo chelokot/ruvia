@@ -1,4 +1,4 @@
-name: Deploy Firebase Hosting
+name: Deploy Firebase (Hosting + Functions)
 
 on:
   push:
@@ -15,17 +15,31 @@ jobs:
 
       - name: Setup Node
         uses: actions/setup-node@v4
-
+        with:
+          node-version: 20
       - name: Install dependencies
         run: npm ci
 
       - name: Build web
         run: npm run build:web
 
-      - name: Deploy to Firebase Hosting (live)
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          channelId: live
-          projectId: ${{ env.PROJECT_ID }}
+      - name: Install Firebase CLI
+        run: npm i -g firebase-tools
+
+      - name: Authenticate with service account
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          echo "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/gcp-key.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/gcp-key.json" >> $GITHUB_ENV
+
+      - name: Set function secrets
+        env:
+          FAL_KEY: ${{ secrets.FAL_KEY }}
+          ANDROID_PACKAGE_NAME: ${{ secrets.ANDROID_PACKAGE_NAME }}
+        run: |
+          if [ -n "$FAL_KEY" ]; then firebase functions:secrets:set FAL_KEY --project $PROJECT_ID --data "$FAL_KEY" --force; fi
+          if [ -n "$ANDROID_PACKAGE_NAME" ]; then firebase functions:secrets:set ANDROID_PACKAGE_NAME --project $PROJECT_ID --data "$ANDROID_PACKAGE_NAME" --force; fi
+
+      - name: Deploy Hosting + Functions
+        run: firebase deploy --only hosting,functions --project $PROJECT_ID
