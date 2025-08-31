@@ -1,7 +1,9 @@
+import { getApiBase } from './runtime';
+
 export type GenerateFormRequest = { prompt: string; imageUri: string; imageUri2?: string; idToken: string };
 export type GenerateResponse = { ok: boolean; data: null | { message: string; images: { url: string; fileName: string }[] }; error?: string };
 
-const BASE = process.env.EXPO_PUBLIC_API_BASE_URL ?? '';
+const BASE = getApiBase();
 
 async function uriToBlob(uri: string): Promise<Blob> {
   // Works on web; on native FormData can take file descriptor object instead

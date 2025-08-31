@@ -115,15 +115,15 @@ export default function Purchase() {
     async function init() {
       if (Platform.OS !== 'android') return;
       try {
-        const InAppPurchases = (await import('expo-in-app-purchases')).default ?? (await import('expo-in-app-purchases'));
-        iapRef.current = InAppPurchases;
-        await InAppPurchases.connectAsync();
+        const IAP = await import('@/lib/iap');
+        iapRef.current = IAP;
+        await IAP.connectAsync();
         const skus = STATIC_PLANS.map(p => p.sku);
-        const { responseCode, results } = await InAppPurchases.getProductsAsync(skus);
-        if (responseCode === InAppPurchases.IAPResponseCode.OK && results && mounted) {
+        const results = await IAP.getProductsAsync(skus);
+        if (mounted && results) {
           const mapped = STATIC_PLANS.map(p => {
-            const storeItem = results.find(r => r.productId === p.sku);
-            return storeItem ? { ...p, title: storeItem.title, price: storeItem.price } : p;
+            const storeItem: any = results.find((r: any) => r.productId === p.sku);
+            return storeItem ? { ...p, title: storeItem.title, price: storeItem.localizedPrice ?? storeItem.price } : p;
           });
           setPlans(mapped);
         }
@@ -134,7 +134,7 @@ export default function Purchase() {
     init();
     return () => {
       mounted = false;
-      iapRef.current?.disconnectAsync?.().catch(() => {});
+      // no explicit disconnect for react-native-iap
     };
   }, []);
 
@@ -142,25 +142,16 @@ export default function Purchase() {
     if (Platform.OS !== 'android') return;
     let remove: any | undefined;
     (async () => {
-      const InAppPurchases = iapRef.current ?? ((await import('expo-in-app-purchases')).default ?? (await import('expo-in-app-purchases')));
-      remove = InAppPurchases.setPurchaseListener(async ({ responseCode, results, errorCode }: any) => {
-        if (responseCode !== InAppPurchases.IAPResponseCode.OK || !results) {
-          if (errorCode) Alert.alert('Purchase failed', String(errorCode));
-          return;
-        }
-        for (const purchase of results) {
-          if (purchase.purchaseState === InAppPurchases.IAPurchaseState.PURCHASED) {
-            try {
-              if (!user) throw new Error('Not signed in');
-              const idToken = await user.getIdToken();
-              await confirmPurchase({ sku: purchase.productId, purchaseToken: purchase.purchaseToken! }, idToken);
-              await InAppPurchases.finishTransactionAsync(purchase, false);
-              Alert.alert('Purchase', 'Thanks! Your credits will update shortly.');
-            } catch (e: any) {
-              // Do not finish transaction so user can retry; but avoid spamming
-              Alert.alert('Purchase failed', e?.message ?? 'Please try again later');
-            }
-          }
+      const IAP = iapRef.current ?? (await import('@/lib/iap'));
+      remove = IAP.setPurchaseListener(async (purchase: any) => {
+        try {
+          if (!user) throw new Error('Not signed in');
+          const idToken = await user.getIdToken();
+          await confirmPurchase({ sku: purchase.productId, purchaseToken: purchase.purchaseToken! }, idToken);
+          await IAP.finishTransactionAsync(purchase);
+          Alert.alert('Purchase', 'Thanks! Your credits will update shortly.');
+        } catch (e: any) {
+          Alert.alert('Purchase failed', e?.message ?? 'Please try again later');
         }
       });
     })();
@@ -176,8 +167,8 @@ export default function Purchase() {
         return;
       }
       setLoading(true);
-      const InAppPurchases = iapRef.current ?? ((await import('expo-in-app-purchases')).default ?? (await import('expo-in-app-purchases')));
-      await InAppPurchases.purchaseItemAsync(p.sku);
+      const IAP = iapRef.current ?? (await import('@/lib/iap'));
+      await IAP.purchaseItemAsync(p.sku);
     } catch (e: any) {
       Alert.alert('Purchase failed', e.message ?? 'Please try again later');
     } finally {
