@@ -1,12 +1,8 @@
+import "dotenv/config";
 import { onRequest, type Request as CFRequest } from "firebase-functions/v2/https";
-import { defineSecret } from "firebase-functions/params";
 import { buildApp } from "./services/app.js";
 
-// Declare deployed secrets
-export const FAL_KEY = defineSecret("FAL_KEY");
-export const ANDROID_PACKAGE_NAME = defineSecret("ANDROID_PACKAGE_NAME");
-
-export const api = onRequest({ secrets: [FAL_KEY, ANDROID_PACKAGE_NAME] }, async (req: CFRequest, res) => {
+export const api = onRequest(async (req: CFRequest, res) => {
   try {
     const app = buildApp();
     const proto = (req.headers["x-forwarded-proto"] as string) || "https";
@@ -29,4 +25,3 @@ export const api = onRequest({ secrets: [FAL_KEY, ANDROID_PACKAGE_NAME] }, async
     res.status(500).send("Internal Server Error");
   }
 });
-

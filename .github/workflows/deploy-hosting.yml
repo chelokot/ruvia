@@ -33,13 +33,16 @@ jobs:
           echo "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/gcp-key.json"
           echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/gcp-key.json" >> $GITHUB_ENV
 
-      - name: Set function secrets
+      - name: Write backend env file
         env:
           FAL_KEY: ${{ secrets.FAL_KEY }}
           ANDROID_PACKAGE_NAME: ${{ secrets.ANDROID_PACKAGE_NAME }}
         run: |
-          if [ -n "$FAL_KEY" ]; then firebase functions:secrets:set FAL_KEY --project $PROJECT_ID --data "$FAL_KEY" --force; fi
-          if [ -n "$ANDROID_PACKAGE_NAME" ]; then firebase functions:secrets:set ANDROID_PACKAGE_NAME --project $PROJECT_ID --data "$ANDROID_PACKAGE_NAME" --force; fi
+          mkdir -p backend
+          {
+            echo "FAL_KEY=${FAL_KEY}"
+            echo "ANDROID_PACKAGE_NAME=${ANDROID_PACKAGE_NAME}"
+          } > backend/.env
 
       - name: Deploy Hosting + Functions
         run: firebase deploy --only hosting,functions --project $PROJECT_ID
