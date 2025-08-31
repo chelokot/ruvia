@@ -50,5 +50,5 @@ jobs:
             echo "ANDROID_PACKAGE_NAME=${ANDROID_PACKAGE_NAME}"
           } > backend/.env
 
-      - name: Deploy Hosting + Functions
-        run: firebase deploy --only hosting,functions --project $PROJECT_ID
+      - name: Deploy Hosting + Functions (web + api targets)
+        run: firebase deploy --only hosting:web,hosting:api,functions --project $PROJECT_ID --force

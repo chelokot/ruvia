@@ -1,6 +1,13 @@
 {
   "projects": {
-    "default": "<set-your-firebase-project-id>"
+    "default": "ruvia-b758a"
+  },
+  "targets": {
+    "ruvia-b758a": {
+      "hosting": {
+        "web": ["ruvia-b758a"],
+        "api": ["ruvia-api"]
+      }
+    }
   }
 }
-

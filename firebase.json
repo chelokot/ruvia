@@ -2,18 +2,29 @@
   "functions": [
     { "source": "backend", "codebase": "api", "runtime": "nodejs20" }
   ],
-  "hosting": {
-    "public": "dist",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "cleanUrls": true,
-    "trailingSlash": false,
-    "rewrites": [
-      { "source": "/api{,/**}", "function": { "functionId": "api", "region": "us-central1", "codebase": "api" } },
-      { "source": "**", "destination": "/index.html" }
-    ]
-  }
+  "hosting": [
+    {
+      "target": "web",
+      "public": "dist",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "cleanUrls": true,
+      "trailingSlash": false,
+      "rewrites": [
+        { "source": "/api{,/**}", "function": { "functionId": "api", "region": "us-central1", "codebase": "api" } },
+        { "source": "**", "destination": "/index.html" }
+      ]
+    },
+    {
+      "target": "api",
+      "public": "api-hosting",
+      "ignore": ["**"],
+      "rewrites": [
+        { "source": "**", "function": { "functionId": "api", "region": "us-central1", "codebase": "api" } }
+      ]
+    }
+  ]
 }
