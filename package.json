@@ -17,7 +17,9 @@
     "generate:styles": "node scripts/generate-styles.js",
     "images:webp": "node scripts/convert-to-webp.js",
     "expo:assets": "node scripts/generate-missing-expo-assets.js",
-    "build:backend:vercel": "git submodule update --init --recursive && cd backend && npm ci && npm run build"
+    "build:backend:vercel": "git submodule update --init --recursive && cd backend && npm ci && npm run build",
+    "deploy:firebase": "npm run build:web && npx firebase deploy --only hosting",
+    "serve:firebase": "npx firebase emulators:start --only hosting"
   },
   "dependencies": {
     "@fal-ai/client": "^1.6.2",
