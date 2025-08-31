@@ -1,0 +1,6 @@
+Negative prompt: illustration/CGI/anime, over-smoothing, warped anatomy, painterly, uncanny skin, AI artifacts, duplicate faces, warped facial features, heavy filters, stickers, blurry, low resolution.
+
+Category: Female Mystery "$name"
+
+Photo: $internal
+
