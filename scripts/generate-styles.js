@@ -49,14 +49,14 @@ function stripOrderPrefix(dirName) {
 }
 
 function findImageFile(dir) {
-  const candidates = ['image.jpg', 'image.jpeg', 'image.png', 'thumb.jpg', 'thumb.png'];
+  const candidates = ['image.webp', 'thumb.webp', 'image.jpg', 'image.jpeg', 'image.png', 'thumb.jpg', 'thumb.png'];
   for (const c of candidates) {
     const p = path.join(dir, c);
     if (fs.existsSync(p)) return p;
   }
   // Fallback: first image file in dir
   const files = fs.readdirSync(dir);
-  const img = files.find((f) => /\.(jpe?g|png)$/i.test(f));
+  const img = files.find((f) => /\.(webp|jpe?g|png)$/i.test(f));
   return img ? path.join(dir, img) : null;
 }
 
