@@ -47,7 +47,6 @@ jobs:
           mkdir -p backend
           {
             echo "FAL_KEY=${FAL_KEY}"
-            echo "FAL_MODEL=${FAL_MODEL}"
             echo "ANDROID_PACKAGE_NAME=${ANDROID_PACKAGE_NAME}"
           } > backend/.env
 

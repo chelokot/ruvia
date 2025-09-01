@@ -1,7 +1,7 @@
 import { fal, ValidationError } from "@fal-ai/client";
 
 export function initFalAi() {
-  if (!process.env.FAL_KEY || !process.env.FAL_MODEL) {
+  if (!process.env.FAL_KEY) {
     throw new Error("Fal AI env is not set");
   }
 }
@@ -27,7 +27,8 @@ export async function generateImage(
   images: string[],
 ): Promise<GenerateImageResponse> {
   try {
-    const result = await fal.subscribe(process.env.FAL_MODEL as string, {
+    console.log("received prompt and image_urls, generating", prompt, image_urls)
+    const result = await fal.subscribe("fal-ai/gemini-25-flash-image/edit" {
       input: {
         prompt,
         image_urls: images,
