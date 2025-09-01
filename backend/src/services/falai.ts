@@ -28,7 +28,7 @@ export async function generateImage(
 ): Promise<GenerateImageResponse> {
   try {
     console.log("received prompt and image_urls, generating", prompt, image_urls)
-    const result = await fal.subscribe("fal-ai/gemini-25-flash-image/edit" {
+    const result = await fal.subscribe("fal-ai/gemini-25-flash-image/edit", {
       input: {
         prompt,
         image_urls: images,
