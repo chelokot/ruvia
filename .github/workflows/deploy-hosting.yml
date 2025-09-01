@@ -69,6 +69,8 @@ jobs:
 
       - name: Start EAS cloud build (Android AAB)
         run: |
+          # Ensure managed workflow by removing native Android dir from the tarball
+          rm -rf android
           mkdir -p artifacts
           eas build --platform android --profile production --non-interactive --json > build.json
           cat build.json
