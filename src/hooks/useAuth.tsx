@@ -8,8 +8,9 @@ import * as Google from 'expo-auth-session/providers/google';
 import { Platform } from 'react-native';
 
 type UserDoc = {
-  balance: number;
-  isNew: boolean;
+  credits: number;
+  generationCount: number;
+  name?: string;
   createdAt?: any;
 };
 

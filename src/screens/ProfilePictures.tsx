@@ -14,9 +14,9 @@ type Mode = 'single' | 'dual';
 export default function ProfilePictures() {
   const router = useRouter();
   const { userDoc } = useAuth();
-  const balance = userDoc?.balance ?? 0;
+  const balance = userDoc?.credits ?? 0;
   // Default to true while userDoc is loading/absent to ensure single-flow UX
-  const isNew = userDoc?.isNew ?? true;
+  const isNew = (userDoc ? userDoc.generationCount === 0 : true);
   const [mode, setMode] = useState<Mode>((getCachedMode() ?? 'single'));
   const [secondary, setSecondary] = useState((getCachedSecondary() ?? 'female'));
   const secondaryOptions = useMemo(() => {
@@ -119,7 +119,7 @@ export default function ProfilePictures() {
           <LogoTitle />
           <View style={{ flex: 1 }} />
           <Pressable accessibilityRole="button" onPress={() => router.push('/purchase')} style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>Balance: {balance}</Text>
+            <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>Credits: {balance}</Text>
             <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: '#00e5ff', justifyContent: 'center', alignItems: 'center' }}>
               <Ionicons name="add" size={16} color="#000" />
             </View>
