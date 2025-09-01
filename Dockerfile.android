@@ -6,7 +6,7 @@ ENV ANDROID_SDK_ROOT=/opt/android-sdk \
 
 RUN dnf -y update \
     && dnf -y install \
-      java-17-openjdk-headless \
+      java-17-openjdk-devel \
       git curl unzip zip tar which findutils \
       nodejs npm \
     && dnf clean all \
@@ -29,4 +29,3 @@ RUN yes | sdkmanager --licenses || true \
       "cmdline-tools;latest"
 
 WORKDIR /workspace
-
