@@ -14,6 +14,16 @@
     "plugins": [
       "expo-router",
       [
+        "expo-build-properties",
+        {
+          "android": {
+            "extraGradleProperties": {
+              "REACT_NATIVE_IAP_STORE": "play"
+            }
+          }
+        }
+      ],
+      [
         "expo-notifications",
         {
           "icon": "./assets/notification-icon.png"
