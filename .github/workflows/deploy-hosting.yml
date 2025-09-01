@@ -53,52 +53,31 @@ jobs:
       - name: Deploy Hosting + Functions (web + api targets)
         run: firebase deploy --only hosting:web,hosting:api,functions --project $PROJECT_ID --force
 
-      # --- Android AAB artifact build via EAS (local) ---
-      - name: Setup Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
+      # --- Android AAB artifact build via EAS (cloud) ---
       - name: Install EAS CLI
         run: npm i -g eas-cli
 
-      - name: Write Android keystore
+      - name: Login to Expo (EAS)
         env:
-          EXPO_ANDROID_KEYSTORE_BASE64: ${{ secrets.EXPO_ANDROID_KEYSTORE_BASE64 }}
+          EXPO_USERNAME: ${{ secrets.EXPO_USERNAME }}
+          EXPO_PASSWORD: ${{ secrets.EXPO_PASSWORD }}
         run: |
-          if [ -n "${EXPO_ANDROID_KEYSTORE_BASE64}" ]; then
-            echo "$EXPO_ANDROID_KEYSTORE_BASE64" | base64 -d > android_keystore.jks
+          if [ -z "$EXPO_USERNAME" ] || [ -z "$EXPO_PASSWORD" ]; then
+            echo "EXPO_USERNAME/EXPO_PASSWORD not set; skipping Expo login" && exit 1
           fi
+          npx expo login -u "$EXPO_USERNAME" -p "$EXPO_PASSWORD" --non-interactive
 
-      - name: Write EAS credentials.json
-        env:
-          EXPO_ANDROID_KEYSTORE_PASSWORD: ${{ secrets.EXPO_ANDROID_KEYSTORE_PASSWORD }}
-          EXPO_ANDROID_KEY_ALIAS: ${{ secrets.EXPO_ANDROID_KEY_ALIAS }}
-          EXPO_ANDROID_KEY_PASSWORD: ${{ secrets.EXPO_ANDROID_KEY_PASSWORD }}
-        run: |
-          cat > credentials.json <<JSON
-          {
-            "android": {
-              "keystore": {
-                "keystorePath": "android_keystore.jks",
-                "keystorePassword": "${EXPO_ANDROID_KEYSTORE_PASSWORD}",
-                "keyAlias": "${EXPO_ANDROID_KEY_ALIAS}",
-                "keyPassword": "${EXPO_ANDROID_KEY_PASSWORD}"
-              }
-            }
-          }
-          JSON
-
-      - name: Build Android AAB (EAS local)
-        env:
-          EAS_NO_VCS: 1
+      - name: Start EAS cloud build (Android AAB)
         run: |
           mkdir -p artifacts
-          eas build --platform android --profile production --local --non-interactive --output ./artifacts/app.aab
+          eas build --platform android --profile production --non-interactive --json > build.json
+          cat build.json
+
+      - name: Download AAB artifact
+        run: |
+          ARTIFACT_URL=$(node -e "const fs=require('fs'); const j=JSON.parse(fs.readFileSync('build.json','utf8')); const u=(Array.isArray(j)?j[0]:j).artifacts?.buildUrl || (Array.isArray(j)?j[0]:j).artifacts?.url || ''; if(!u){process.exit(2)} console.log(u)")
+          echo "Artifact: $ARTIFACT_URL"
+          curl -L "$ARTIFACT_URL" -o artifacts/app.aab
 
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v4
