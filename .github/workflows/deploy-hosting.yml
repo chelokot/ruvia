@@ -52,3 +52,27 @@ jobs:
 
       - name: Deploy Hosting + Functions (web + api targets)
         run: firebase deploy --only hosting:web,hosting:api,functions --project $PROJECT_ID --force
+
+      # --- Android APK artifact build ---
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses
+
+      - name: Assemble Android debug APK
+        working-directory: android
+        run: ./gradlew --no-daemon assembleDebug
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: warn
