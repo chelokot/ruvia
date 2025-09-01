@@ -53,23 +53,6 @@ jobs:
       - name: Deploy Hosting + Functions (web + api targets)
         run: firebase deploy --only hosting:web,hosting:api,functions --project $PROJECT_ID --force
 
-      # --- Android build precheck with Gradle (ensures project compiles end-to-end) ---
-      - name: Setup Java 17 (for Gradle)
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Accept Android SDK licenses
-        run: yes | sdkmanager --licenses
-
-      - name: Gradle precheck bundleRelease
-        working-directory: android
-        run: ./gradlew --no-daemon :app:bundleRelease
-
       # --- Android AAB artifact build via EAS (cloud) ---
       - name: Install EAS CLI
         run: npm i -g eas-cli
