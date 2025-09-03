@@ -21,7 +21,9 @@
   "submit": {
     "production": {
       "android": {
-        "serviceAccountKeyPath": "./play-service-account.json"
+        "serviceAccountKeyPath": "./play-service-account.json",
+        "track": "production",
+        "releaseStatus": "completed"
       }
     }
   }

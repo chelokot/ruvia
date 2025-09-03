@@ -97,4 +97,4 @@ jobs:
             echo "GOOGLE_PLAY_SERVICE_ACCOUNT not set" && exit 1
           fi
           echo "$GOOGLE_PLAY_SERVICE_ACCOUNT" > play-service-account.json
-          eas submit --platform android --profile production --path artifacts/app.aab --key play-service-account.json --non-interactive
+          eas submit --platform android --profile production --path artifacts/app.aab --non-interactive
