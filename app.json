@@ -30,7 +30,8 @@
         }
       ],
       "expo-camera",
-      "expo-media-library"
+      "expo-media-library",
+      ["react-native-iap", { "paymentProvider": "Play Store" }]
     ],
     "android": {
       "package": "com.ruvia.app",
