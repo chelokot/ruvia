@@ -15,11 +15,13 @@
     "build:web": "expo export -p web",
     "test": "jest",
     "postinstall": "patch-package",
+    "prepare": "husky install",
     "generate:styles": "node scripts/generate-styles.js",
     "images:webp": "node scripts/convert-to-webp.js",
     "expo:assets": "node scripts/generate-missing-expo-assets.js",
     "deploy:firebase": "npm run build:web && npx firebase deploy --only hosting",
-    "serve:firebase": "npx firebase emulators:start --only hosting"
+    "serve:firebase": "npx firebase emulators:start --only hosting",
+    "bump:android-version": "node scripts/bump-version-code.js"
   },
   "dependencies": {
     "@fal-ai/client": "^1.6.2",
@@ -66,7 +68,8 @@
     "jest": "^29.7.0",
     "patch-package": "^8.0.0",
     "react-test-renderer": "18.2.0",
-    "typescript": "~5.3.3"
+    "typescript": "~5.3.3",
+    "husky": "^9.0.11"
   },
   "jest": {
     "preset": "react-native",
