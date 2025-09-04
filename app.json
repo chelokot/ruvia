@@ -21,7 +21,7 @@
             "targetSdkVersion": 35,
             "extraGradleProperties": {
               "REACT_NATIVE_IAP_STORE": "play",
-              "RNIap_playBillingSdkVersion": "8.0.0",
+              "RNIap_playBillingSdkVersion": "7.0.0",
               "android.suppressUnsupportedCompileSdk": "35"
             }
           }
