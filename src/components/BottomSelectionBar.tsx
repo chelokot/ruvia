@@ -41,10 +41,11 @@ export default function BottomSelectionBar({ count, balance, onReset, onContinue
       <Pressable
         accessibilityRole="button"
         onPress={over ? onBuy : onContinue}
-        style={{ paddingVertical: 12, paddingHorizontal: 18, backgroundColor: '#4360FE', borderRadius: 10 }}
+        style={{ paddingVertical: 12, paddingHorizontal: 18, backgroundColor: colors.PRIMARY, borderRadius: 10 }}
       >
         <Text style={{ color: '#000', fontWeight: '700' }}>{over ? 'Buy more' : `Continue with ${count} style${count > 1 ? 's' : ''}`}</Text>
       </Pressable>
     </View>
   );
 }
+import * as colors from '@/theme/colors';

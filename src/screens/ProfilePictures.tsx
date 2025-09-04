@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { getStyleRowsByKey, StyleItem } from '@/data/styles';
 import StyleRow from '@/components/StyleRow';
 import { Ionicons } from '@expo/vector-icons';
+import * as colors from '@/theme/colors';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
 import { getMode as getPrefMode, setMode as setPrefMode, getSecondary as getPrefSecondary, setSecondary as setPrefSecondary, getCachedMode, getCachedSecondary } from '@/lib/prefs';
@@ -120,7 +121,7 @@ export default function ProfilePictures() {
           <View style={{ flex: 1 }} />
           <Pressable accessibilityRole="button" onPress={() => router.push('/purchase')} style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>Credits: {balance}</Text>
-            <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: '#4360FE', justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: colors.PRIMARY, justifyContent: 'center', alignItems: 'center' }}>
               <Ionicons name="add" size={16} color="#000" />
             </View>
           </Pressable>

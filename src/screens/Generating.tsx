@@ -1,6 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, ToastAndroid, Animated, Easing, Platform, Alert } from 'react-native';
+import * as colors from '@/theme/colors';
 import { useAuth } from '@/hooks/useAuth';
 import { generateStyles } from '@/lib/api';
 
@@ -84,7 +85,7 @@ export default function Generating() {
       {!!subStatus && <Text style={{ color: '#666', marginBottom: 16 }}>{subStatus}</Text>}
 
       <View style={{ height: 10, backgroundColor: '#111', borderRadius: 999, overflow: 'hidden' }}>
-        <Animated.View style={{ height: '100%', width: barWidth, backgroundColor: '#4360FE' }} />
+        <Animated.View style={{ height: '100%', width: barWidth, backgroundColor: colors.PRIMARY }} />
       </View>
 
       {/* Keep the UI clean: single progress indicator, no extra spinners */}
