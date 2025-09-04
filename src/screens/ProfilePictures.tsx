@@ -120,7 +120,7 @@ export default function ProfilePictures() {
           <View style={{ flex: 1 }} />
           <Pressable accessibilityRole="button" onPress={() => router.push('/purchase')} style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>Credits: {balance}</Text>
-            <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: '#00e5ff', justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: '#4360FE', justifyContent: 'center', alignItems: 'center' }}>
               <Ionicons name="add" size={16} color="#000" />
             </View>
           </Pressable>

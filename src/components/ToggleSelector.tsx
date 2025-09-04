@@ -49,8 +49,8 @@ export default function ToggleSelector({ value, options, onChange }: Props) {
           justifyContent: 'space-between',
         }}
       >
-        <Text style={{ color: '#00e5ff' }}>{current?.label}</Text>
-        <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={16} color="#00e5ff" />
+        <Text style={{ color: '#4360FE' }}>{current?.label}</Text>
+        <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={16} color="#4360FE" />
       </Pressable>
 
       <Modal visible={open} transparent animationType="none" onRequestClose={() => setOpen(false)}>
@@ -79,7 +79,7 @@ export default function ToggleSelector({ value, options, onChange }: Props) {
                   onPress={() => pick(o.value)}
                   style={{ paddingVertical: 10, paddingHorizontal: 12, backgroundColor: active ? 'rgba(0,229,255,0.08)' : 'transparent' }}
                 >
-                  <Text style={{ color: active ? '#00e5ff' : '#ddd' }}>{o.label}</Text>
+                  <Text style={{ color: active ? '#4360FE' : '#ddd' }}>{o.label}</Text>
                 </Pressable>
               );
             })}

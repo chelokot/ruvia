@@ -169,7 +169,7 @@ export default function Register() {
           onPress={handleGoogle}
           style={{ backgroundColor: '#111', borderColor: '#222', borderWidth: 1, padding: 14, borderRadius: 12, flexDirection: 'row', justifyContent: 'center', gap: 8 }}
         >
-          <Ionicons name="logo-google" size={18} color="#00e5ff" />
+          <Ionicons name="logo-google" size={18} color="#4360FE" />
           <Text style={{ color: '#fff' }}>{mode === 'signup' ? 'Sign up' : 'Sign in'} with Google</Text>
         </Pressable>
 
@@ -199,13 +199,13 @@ export default function Register() {
         <Pressable
           accessibilityRole="button"
           onPress={handleEmail}
-          style={{ backgroundColor: '#00e5ff', padding: 14, borderRadius: 12, alignItems: 'center' }}
+          style={{ backgroundColor: '#4360FE', padding: 14, borderRadius: 12, alignItems: 'center' }}
         >
           <Text style={{ color: '#000', fontWeight: '700' }}>{mode === 'signup' ? 'Sign up' : 'Sign in'} with Email</Text>
         </Pressable>
         {error && <Text style={{ color: '#f43f5e' }}>{error}</Text>}
         <Pressable onPress={() => setMode(mode === 'signup' ? 'signin' : 'signup')}>
-          <Text style={{ color: '#00e5ff', textAlign: 'center', textDecorationLine: 'underline' }}>
+          <Text style={{ color: '#4360FE', textAlign: 'center', textDecorationLine: 'underline' }}>
             {mode === 'signup' ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
           </Text>
         </Pressable>
@@ -214,9 +214,9 @@ export default function Register() {
           <Text style={{ color: '#666', fontSize: 12 }}>
             By continuing you agree to our
             {' '}
-            <Text style={{ color: '#00e5ff', textDecorationLine: 'underline' }} onPress={() => router.push('/terms')}>Terms of Use</Text>
+            <Text style={{ color: '#4360FE', textDecorationLine: 'underline' }} onPress={() => router.push('/terms')}>Terms of Use</Text>
             {' '}and{' '}
-            <Text style={{ color: '#00e5ff', textDecorationLine: 'underline' }} onPress={() => router.push('/privacy')}>Privacy Policy</Text>
+            <Text style={{ color: '#4360FE', textDecorationLine: 'underline' }} onPress={() => router.push('/privacy')}>Privacy Policy</Text>
             .
           </Text>
         </View>

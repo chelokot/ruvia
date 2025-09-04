@@ -32,7 +32,7 @@ export default memo(function StyleCard({ item, selected, onPress }: Props) {
               width: 24,
               height: 24,
               borderRadius: 12,
-              backgroundColor: '#00e5ff',
+              backgroundColor: '#4360FE',
               justifyContent: 'center',
               alignItems: 'center',
             }}

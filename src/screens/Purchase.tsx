@@ -199,17 +199,17 @@ export default function Purchase() {
           {plans.map((p) => {
             const active = p.sku === selected;
             return (
-              <Pressable key={p.sku} onPress={() => setSelected(p.sku)} style={{ backgroundColor: '#111', borderColor: active ? '#00e5ff' : '#222', borderWidth: 1, borderRadius: 12, padding: 16, flexDirection: 'row', alignItems: 'center' }}>
-                <View style={{ width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: active ? '#00e5ff' : '#444', justifyContent: 'center', alignItems: 'center', marginRight: 12 }}>
-                  {active && <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: '#00e5ff' }} />}
+              <Pressable key={p.sku} onPress={() => setSelected(p.sku)} style={{ backgroundColor: '#111', borderColor: active ? '#4360FE' : '#222', borderWidth: 1, borderRadius: 12, padding: 16, flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: active ? '#4360FE' : '#444', justifyContent: 'center', alignItems: 'center', marginRight: 12 }}>
+                  {active && <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: '#4360FE' }} />}
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>{p.title}</Text>
                   <Text style={{ color: '#bbb', marginTop: 2 }}>{p.price}</Text>
                 </View>
                 {!!p.save && (
-                  <View style={{ paddingVertical: 4, paddingHorizontal: 8, borderRadius: 999, backgroundColor: 'rgba(0,229,255,0.12)', borderColor: '#00e5ff', borderWidth: 1 }}>
-                    <Text style={{ color: '#00e5ff', fontSize: 12, fontWeight: '700' }}>{p.save}</Text>
+                  <View style={{ paddingVertical: 4, paddingHorizontal: 8, borderRadius: 999, backgroundColor: 'rgba(67,96,254,0.12)', borderColor: '#4360FE', borderWidth: 1 }}>
+                    <Text style={{ color: '#4360FE', fontSize: 12, fontWeight: '700' }}>{p.save}</Text>
                   </View>
                 )}
               </Pressable>
@@ -222,7 +222,7 @@ export default function Purchase() {
         <Pressable
           accessibilityRole="button"
           onPress={() => buy(plans.find((p) => p.sku === selected)!)}
-          style={{ backgroundColor: loading ? '#0aa' : '#00e5ff', padding: 14, borderRadius: 12, alignItems: 'center', opacity: loading ? 0.7 : 1 }}
+          style={{ backgroundColor: loading ? '#2d47d6' : '#4360FE', padding: 14, borderRadius: 12, alignItems: 'center', opacity: loading ? 0.7 : 1 }}
         >
           <Text style={{ color: '#000', fontWeight: '800' }}>{loading ? 'Processing…' : 'Buy'}</Text>
         </Pressable>

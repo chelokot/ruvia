@@ -141,7 +141,7 @@ export default function Upload() {
         {imgUri && (
           <Image source={{ uri: imgUri }} style={{ width: '100%', height: 300, borderRadius: 12 }} resizeMode="cover" />
         )}
-        <Pressable disabled={!imgUri || loading} onPress={startGenerating} accessibilityRole="button" style={{ opacity: !imgUri || loading ? 0.6 : 1, backgroundColor: '#00e5ff', padding: 14, borderRadius: 12, alignItems: 'center' }}>
+        <Pressable disabled={!imgUri || loading} onPress={startGenerating} accessibilityRole="button" style={{ opacity: !imgUri || loading ? 0.6 : 1, backgroundColor: '#4360FE', padding: 14, borderRadius: 12, alignItems: 'center' }}>
           <Text style={{ color: '#000', fontWeight: '700' }}>{loading ? 'Generating...' : 'Start generating'}</Text>
         </Pressable>
         <Text style={{ color: '#666', textAlign: 'center' }}>Results will be saved in the app folder automatically.</Text>
