@@ -6,7 +6,6 @@ import { useAuth } from '@/hooks/useAuth';
 import * as colors from '@/theme/colors';
 import LogoTitle from '@/components/LogoTitle';
 import { Ionicons } from '@expo/vector-icons';
-import * as colors from '@/theme/colors';
 
 // Local image sets: 10 squares per row
 const row1 = [
