@@ -114,8 +114,8 @@ android {
         applicationId 'com.ruvia.app'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion 35
-        versionCode 12
-        versionName "0.1.4"
+        versionCode 13
+        versionName "0.1.5"
         // Resolve variant ambiguity for react-native-iap flavors (amazon/play)
         // Prefer 'play' when a dependency requires the 'store' dimension
         missingDimensionStrategy 'store', 'play'
@@ -155,6 +155,16 @@ android {
     }
 }
 
+// Ensure runtime classpath uses Billing v8 (strong override)
+configurations.configureEach { config ->
+    resolutionStrategy {
+        force(
+            'com.android.billingclient:billing:8.0.0',
+            'com.android.billingclient:billing-ktx:8.0.0'
+        )
+    }
+}
+
 // Apply static values from `gradle.properties` to the `android.packagingOptions`
 // Accepts values in comma delimited lists, example:
 // android.packagingOptions.pickFirsts=/LICENSE,**/picasa.ini
@@ -178,6 +188,8 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+
+    // Keep dependencies minimal here; version is forced via resolutionStrategy below.
 
     def isGifEnabled = (findProperty('expo.gif.enabled') ?: "") == "true";
     def isWebpEnabled = (findProperty('expo.webp.enabled') ?: "") == "true";

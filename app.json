@@ -3,7 +3,7 @@
     "name": "Ruvia",
     "slug": "ruvia",
     "scheme": "ruvia",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -21,7 +21,7 @@
             "targetSdkVersion": 35,
             "extraGradleProperties": {
               "REACT_NATIVE_IAP_STORE": "play",
-              "RNIap_playBillingSdkVersion": "6.1.0",
+              "RNIap_playBillingSdkVersion": "8.0.0",
               "android.suppressUnsupportedCompileSdk": "35"
             }
           }
@@ -52,7 +52,7 @@
         "backgroundColor": "#000000",
         "monochromeImage": "./assets/adaptive-icon-monochrome.png"
       },
-      "versionCode": 12
+      "versionCode": 13
     },
     "extra": {
       "router": {
