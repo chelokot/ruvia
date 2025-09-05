@@ -3,7 +3,7 @@
     "name": "Ruvia",
     "slug": "ruvia",
     "scheme": "ruvia",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -21,7 +21,7 @@
             "targetSdkVersion": 35,
             "extraGradleProperties": {
               "REACT_NATIVE_IAP_STORE": "play",
-              "RNIap_playBillingSdkVersion": "8.0.0",
+              "RNIap_playBillingSdkVersion": "7.1.1",
               "android.suppressUnsupportedCompileSdk": "35"
             }
           }
@@ -34,13 +34,7 @@
         }
       ],
       "expo-camera",
-      "expo-media-library",
-      [
-        "react-native-iap",
-        {
-          "paymentProvider": "Play Store"
-        }
-      ]
+      "expo-media-library"
     ],
     "android": {
       "package": "com.ruvia.app",
@@ -52,7 +46,7 @@
         "backgroundColor": "#000000",
         "monochromeImage": "./assets/adaptive-icon-monochrome.png"
       },
-      "versionCode": 13
+      "versionCode": 14
     },
     "extra": {
       "router": {

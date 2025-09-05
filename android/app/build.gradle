@@ -114,8 +114,8 @@ android {
         applicationId 'com.ruvia.app'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion 35
-        versionCode 13
-        versionName "0.1.5"
+        versionCode 14
+        versionName "0.1.6"
         // Resolve variant ambiguity for react-native-iap flavors (amazon/play)
         // Prefer 'play' when a dependency requires the 'store' dimension
         missingDimensionStrategy 'store', 'play'
@@ -155,12 +155,12 @@ android {
     }
 }
 
-// Ensure runtime classpath uses Billing v8 (strong override)
+// Ensure runtime classpath uses Billing v7 (strong override)
 configurations.configureEach { config ->
     resolutionStrategy {
         force(
-            'com.android.billingclient:billing:8.0.0',
-            'com.android.billingclient:billing-ktx:8.0.0'
+            'com.android.billingclient:billing:7.1.1',
+            'com.android.billingclient:billing-ktx:7.1.1'
         )
     }
 }
