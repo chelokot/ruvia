@@ -114,7 +114,7 @@ android {
         applicationId 'com.ruvia.app'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion 35
-        versionCode 9
+        versionCode 10
         versionName "0.1.0"
         // Resolve variant ambiguity for react-native-iap flavors (amazon/play)
         // Prefer 'play' when a dependency requires the 'store' dimension
