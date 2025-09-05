@@ -18,9 +18,28 @@ export default function Terms() {
         <Text style={{ color: '#fff', fontSize: 20, fontWeight: '700' }}>Terms of Use</Text>
       </View>
       <View style={{ gap: 8 }}>
-        <Text style={{ color: '#bbb' }}>
-          These Terms of Use are a placeholder. Replace with your legal terms. By using this app you agree to the
-          terms and policies provided by the company.
+        <Text style={{ color: '#bbb', lineHeight: 20 }}>
+          Welcome to Ruvia. By using the app, you agree to these terms.
+          {'\n\n'}
+          1) Eligibility: You must be 18+ or have parental consent.
+          {'\n'}
+          2) Your Content: Upload only content you own or have rights to. Do not upload images of minors or illegal, abusive, or infringing content.
+          {'\n'}
+          3) License: You grant us a limited license to process your content for generating results and operating the service. We do not sell your content.
+          {'\n'}
+          4) Results: AI outputs may vary. The service is provided “as is,” without warranties of fitness for a particular purpose.
+          {'\n'}
+          5) Credits & Billing: Credits are consumed when generating. Purchases are handled by app stores. Refunds follow store policies unless required by law.
+          {'\n'}
+          6) Privacy: See the Privacy Policy regarding data.
+          {'\n'}
+          7) Conduct: No harassment, hate, or misuse.
+          {'\n'}
+          8) Termination: We may suspend access for violations.
+          {'\n'}
+          9) Changes: We may update terms; continued use means acceptance.
+          {'\n\n'}
+          Contact: support@ruvia.art
         </Text>
       </View>
     </ScrollView>
