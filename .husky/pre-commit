@@ -1,15 +1,19 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# 1) Bump Android version code in app.json (and local Gradle) and show result
+# 1) Bump patch version (x.y.z -> x.y.z+1) in app.json, package.json, and Gradle
+echo "[husky] Bumping patch version (SemVer patch)"
+node scripts/bump-patch-version.js || exit 1
+
+# 2) Bump Android version code in app.json (and local Gradle) and show result
 echo "[husky] Bumping Android versionCode"
 node scripts/bump-version-code.js || exit 1
 cat app.json | sed -n '1,80p' | rg -n 'versionCode' || true
 
-# 2) Run frontend tests (root)
+# 3) Run frontend tests (root)
 npm test -- --ci || exit 1
 
-# 3) Run backend tests
+# 4) Run backend tests
 if [ -d backend ]; then
   if [ -x backend/node_modules/.bin/jest ]; then
     (cd backend && npm test -- --ci) || exit 1
