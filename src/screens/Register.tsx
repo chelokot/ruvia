@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { ImageSourcePropType } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
-import * as colors from '@/theme/colors';
+import * as colors from '@/theme/theme';
 import LogoTitle from '@/components/LogoTitle';
 import { Ionicons } from '@expo/vector-icons';
 

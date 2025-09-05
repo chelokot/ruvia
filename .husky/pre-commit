@@ -1,1 +1,13 @@
-npm run bump:android-version
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# 1) Bump Android version code in app.json (and local Gradle)
+npm run bump:android-version || exit 1
+
+# 2) Run frontend tests (root)
+npm test -- --ci || exit 1
+
+# 3) Run backend tests
+if [ -d backend ]; then
+  (cd backend && npm test -- --ci) || exit 1
+fi

@@ -1,7 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { View, Text, Image, Pressable, Alert, ScrollView } from 'react-native';
-import * as colors from '@/theme/colors';
+import * as colors from '@/theme/theme';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { getStyleRowsByKey } from '@/data/styles';

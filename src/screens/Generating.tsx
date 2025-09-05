@@ -1,7 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, ToastAndroid, Animated, Easing, Platform, Alert } from 'react-native';
-import * as colors from '@/theme/colors';
+import * as colors from '@/theme/theme';
 import { useAuth } from '@/hooks/useAuth';
 import { generateStyles } from '@/lib/api';
 

@@ -1,5 +1,5 @@
 import { View, Text, Pressable, TextInput, Alert } from 'react-native';
-import * as colors from '@/theme/colors';
+import * as colors from '@/theme/theme';
 import * as Notifications from 'expo-notifications';
 import { useState } from 'react';
 import { sendFeedback } from '@/lib/api';

@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { getStyleRowsByKey, StyleItem } from '@/data/styles';
 import StyleRow from '@/components/StyleRow';
 import { Ionicons } from '@expo/vector-icons';
-import * as colors from '@/theme/colors';
+import * as colors from '@/theme/theme';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
 import { getMode as getPrefMode, setMode as setPrefMode, getSecondary as getPrefSecondary, setSecondary as setPrefSecondary, getCachedMode, getCachedSecondary } from '@/lib/prefs';

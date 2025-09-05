@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import * as colors from '@/theme/colors';
+import * as colors from '@/theme/theme';
 import type { StyleItem } from '@/data/styles';
 
 type Props = {

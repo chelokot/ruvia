@@ -48,4 +48,4 @@ export default function BottomSelectionBar({ count, balance, onReset, onContinue
     </View>
   );
 }
-import * as colors from '@/theme/colors';
+import * as colors from '@/theme/theme';

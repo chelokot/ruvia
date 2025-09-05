@@ -2,7 +2,7 @@ import { View, Text, Pressable, Alert, Image, Animated, Easing } from 'react-nat
 import { confirmPurchase } from '@/lib/api';
 import { Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import * as colors from '@/theme/colors';
+import * as colors from '@/theme/theme';
 import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 // Loaded dynamically on Android to avoid web build issues

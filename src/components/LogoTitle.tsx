@@ -1,5 +1,5 @@
 import { View, Text, Image } from 'react-native';
-import * as colors from '@/theme/colors';
+import * as colors from '@/theme/theme';
 
 export default function LogoTitle({ title = 'Ruvia' }: { title?: string }) {
   return (

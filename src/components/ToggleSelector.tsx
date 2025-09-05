@@ -1,7 +1,7 @@
 import { View, Pressable, Text, Modal } from 'react-native';
 import { useRef, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import * as colors from '@/theme/colors';
+import * as colors from '@/theme/theme';
 
 type Option = { label: string; value: string };
 
