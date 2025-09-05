@@ -130,7 +130,7 @@ function MarqueeRow({
 
 export default function Register() {
   const router = useRouter();
-  const { signupEmail, signinGoogle } = useAuth();
+  const { signupEmail, signinGoogle, signinEmail } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [mode, setMode] = useState<'signup' | 'signin'>('signup');
@@ -140,7 +140,7 @@ export default function Register() {
     setError(null);
     try {
       if (mode === 'signup') await signupEmail(email, password);
-      else await useAuth().signinEmail(email, password);
+      else await signinEmail(email, password);
     } catch (e: any) {
       setError(e.message ?? 'Failed');
     }

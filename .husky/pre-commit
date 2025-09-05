@@ -1,8 +1,10 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# 1) Bump Android version code in app.json (and local Gradle)
-npm run bump:android-version || exit 1
+# 1) Bump Android version code in app.json (and local Gradle) and show result
+echo "[husky] Bumping Android versionCode"
+node scripts/bump-version-code.js || exit 1
+cat app.json | sed -n '1,80p' | rg -n 'versionCode' || true
 
 # 2) Run frontend tests (root)
 npm test -- --ci || exit 1
