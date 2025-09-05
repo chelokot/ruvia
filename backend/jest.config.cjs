@@ -1,12 +1,13 @@
 /** @type {import('jest').Config} */
 module.exports = {
-  preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'node',
-  extensionsToTreatAsEsm: ['.ts'],
   transform: {
     '^.+\\.(ts|tsx)$': [
-      'ts-jest',
-      { useESM: true, tsconfig: '<rootDir>/tsconfig.json' },
+      'babel-jest',
+      { presets: [
+        ['@babel/preset-env', { targets: { node: 'current' } }],
+        ['@babel/preset-typescript', { allowDeclareFields: true }]
+      ]}
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js'],

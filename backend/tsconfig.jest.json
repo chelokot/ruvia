@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "verbatimModuleSyntax": false,
+    "isolatedModules": true,
+    "types": ["node", "jest"],
+    "noEmit": true
+  }
+}
+

@@ -52,7 +52,7 @@
         "backgroundColor": "#000000",
         "monochromeImage": "./assets/adaptive-icon-monochrome.png"
       },
-      "versionCode": 7
+      "versionCode": 9
     },
     "extra": {
       "router": {

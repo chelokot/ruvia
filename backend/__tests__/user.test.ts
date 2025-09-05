@@ -2,16 +2,17 @@ import { useCredits } from '../src/services/user';
 
 function makeDb(initialCredits: number) {
   let credits = initialCredits;
+  const firestore = {
+    runTransaction: async (fn: any) => fn({
+      get: async (_ref: any) => ({ exists: true, data: () => ({ credits }) }),
+      update: (_ref: any, update: any) => { credits = update.credits; },
+    }),
+  };
+  const docRef = { id: 'u' };
   return {
     user: {
-      doc: (_id: string) => ({
-        firestore: {
-          runTransaction: async (fn: any) => fn({
-            get: async () => ({ exists: true, data: () => ({ credits }) }),
-            update: (_ref: any, update: any) => { credits = update.credits; },
-          }),
-        },
-      }),
+      firestore,
+      doc: (_id: string) => docRef,
     },
     get credits() { return credits; },
   } as any;
@@ -38,4 +39,3 @@ describe('useCredits', () => {
     expect(db.credits).toBe(1);
   });
 });
-
