@@ -5,15 +5,33 @@
 echo "[husky] Bumping patch version (SemVer patch)"
 node scripts/bump-patch-version.js || exit 1
 
-# 2) Bump Android version code in app.json (and local Gradle) and show result
+# 2) Format staged files with Prettier (non-destructive)
+echo "[husky] Formatting staged files"
+node scripts/format-staged.js || exit 1
+
+# 3) Bump Android version code in app.json (and local Gradle) and show result
 echo "[husky] Bumping Android versionCode"
 node scripts/bump-version-code.js || exit 1
 cat app.json | sed -n '1,80p' | rg -n 'versionCode' || true
 
-# 3) Run frontend tests (root)
+# 4) Verify lockfiles are in sync (frontend + backend)
+echo "[husky] Verifying npm lockfile (root)"
+npm ci --silent --ignore-scripts --dry-run || {
+  echo "[husky] npm ci lockfile check failed in root";
+  exit 1;
+}
+if [ -f backend/package.json ]; then
+  echo "[husky] Verifying npm lockfile (backend)"
+  (cd backend && npm ci --silent --ignore-scripts --dry-run) || {
+    echo "[husky] npm ci lockfile check failed in backend";
+    exit 1;
+  }
+fi
+
+# 5) Run frontend tests (root)
 npm test -- --ci || exit 1
 
-# 4) Run backend tests
+# 6) Run backend tests
 if [ -d backend ]; then
   if [ -x backend/node_modules/.bin/jest ]; then
     (cd backend && npm test -- --ci) || exit 1
