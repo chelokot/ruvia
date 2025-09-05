@@ -1,10 +1,13 @@
-import { View, Text, Pressable, TextInput, Animated, Easing, Image } from 'react-native';
+import { View, Text, Pressable, Animated, Easing, Image } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 import type { ImageSourcePropType } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
 import * as colors from '@/theme/theme';
 import LogoTitle from '@/components/LogoTitle';
+import TextField from '@/components/ui/TextField';
+import PrimaryButton from '@/components/ui/PrimaryButton';
+import Separator from '@/components/ui/Separator';
 import { Ionicons } from '@expo/vector-icons';
 
 // Local image sets: 10 squares per row
@@ -158,10 +161,10 @@ export default function Register() {
         <LogoTitle />
         <Text style={{ color: '#bbb', marginTop: 8 }}>Welcome! Get ready for your AI profile pictures</Text>
       </View>
-      <View style={{ gap: 8, marginBottom: 24 }}>
-        <MarqueeRow direction="rtl" images={row1} itemSize={90} speed={48} />
-        <MarqueeRow direction="ltr" images={row2} itemSize={90} speed={52} />
-        <MarqueeRow direction="rtl" images={row3} itemSize={90} speed={50} />
+      <View style={{ gap: 8, marginBottom: 24, marginHorizontal: -16 }}>
+        <MarqueeRow direction="rtl" images={row1} itemSize={96} speed={48} />
+        <MarqueeRow direction="ltr" images={row2} itemSize={96} speed={52} />
+        <MarqueeRow direction="rtl" images={row3} itemSize={96} speed={50} />
       </View>
 
       <View style={{ gap: 12, marginTop: 16 }}>
@@ -174,36 +177,22 @@ export default function Register() {
           <Text style={{ color: '#fff' }}>{mode === 'signup' ? 'Sign up' : 'Sign in'} with Google</Text>
         </Pressable>
 
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <View style={{ flex: 1, height: 1, backgroundColor: '#222' }} />
-          <Text style={{ color: '#555' }}>or</Text>
-          <View style={{ flex: 1, height: 1, backgroundColor: '#222' }} />
-        </View>
+        <Separator text="or" />
 
-        <TextInput
+        <TextField
           placeholder="Email"
-          placeholderTextColor="#666"
           autoCapitalize="none"
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
-          style={{ backgroundColor: '#111', color: '#fff', padding: 12, borderRadius: 10, borderColor: '#222', borderWidth: 1 }}
         />
-        <TextInput
+        <TextField
           placeholder="Password"
-          placeholderTextColor="#666"
           secureTextEntry
           value={password}
           onChangeText={setPassword}
-          style={{ backgroundColor: '#111', color: '#fff', padding: 12, borderRadius: 10, borderColor: '#222', borderWidth: 1 }}
         />
-        <Pressable
-          accessibilityRole="button"
-          onPress={handleEmail}
-          style={{ backgroundColor: colors.PRIMARY, padding: 14, borderRadius: 12, alignItems: 'center' }}
-        >
-          <Text style={{ color: '#000', fontWeight: '700' }}>{mode === 'signup' ? 'Sign up' : 'Sign in'} with Email</Text>
-        </Pressable>
+        <PrimaryButton title={`${mode === 'signup' ? 'Sign up' : 'Sign in'} with Email`} onPress={handleEmail} />
         {error && <Text style={{ color: '#f43f5e' }}>{error}</Text>}
         <Pressable onPress={() => setMode(mode === 'signup' ? 'signin' : 'signup')}>
           <Text style={{ color: colors.PRIMARY, textAlign: 'center', textDecorationLine: 'underline' }}>

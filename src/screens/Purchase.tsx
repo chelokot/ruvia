@@ -220,13 +220,11 @@ export default function Purchase() {
       </View>
 
       <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: 16, borderTopColor: '#111', borderTopWidth: 1, backgroundColor: '#000' }}>
-        <Pressable
-          accessibilityRole="button"
+        <PrimaryButton
+          title={loading ? 'Processing…' : 'Buy'}
           onPress={() => buy(plans.find((p) => p.sku === selected)!)}
-          style={{ backgroundColor: loading ? colors.PRIMARY_DIM : colors.PRIMARY, padding: 14, borderRadius: 12, alignItems: 'center', opacity: loading ? 0.7 : 1 }}
-        >
-          <Text style={{ color: '#000', fontWeight: '800' }}>{loading ? 'Processing…' : 'Buy'}</Text>
-        </Pressable>
+          disabled={loading}
+        />
       </View>
     </View>
   );

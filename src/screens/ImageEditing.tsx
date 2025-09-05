@@ -3,6 +3,7 @@ import * as colors from '@/theme/theme';
 import * as Notifications from 'expo-notifications';
 import { useState } from 'react';
 import { sendFeedback } from '@/lib/api';
+import PrimaryButton from '@/components/ui/PrimaryButton';
 
 export default function ImageEditing() {
   const [suggestion, setSuggestion] = useState('');
@@ -18,9 +19,7 @@ export default function ImageEditing() {
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', gap: 16 }}>
         <Text style={{ color: '#fff', fontSize: 20, fontWeight: '700' }}>Image Editing</Text>
         <Text style={{ color: '#bbb' }}>More image editing features are yet to be implemented.</Text>
-        <Pressable accessibilityRole="button" onPress={askNotify} style={{ backgroundColor: colors.PRIMARY, padding: 14, borderRadius: 12, alignSelf: 'center' }}>
-          <Text style={{ color: '#000', fontWeight: '700' }}>Notify me when available</Text>
-        </Pressable>
+        <PrimaryButton title="Notify me when available" onPress={askNotify} style={{ alignSelf: 'center', width: '70%' }} />
         <View style={{ gap: 8, width: '90%', maxWidth: 520, marginTop: 16 }}>
           <Text style={{ color: '#fff' }}>Tell us what features you’d like:</Text>
           <TextInput
@@ -32,8 +31,8 @@ export default function ImageEditing() {
             numberOfLines={4}
             style={{ backgroundColor: '#111', color: '#fff', padding: 12, borderRadius: 10, borderColor: '#222', borderWidth: 1, minHeight: 100 }}
           />
-          <Pressable
-            accessibilityRole="button"
+          <PrimaryButton
+            title="Send"
             disabled={!suggestion.trim()}
             onPress={async () => {
               const message = suggestion.trim();
@@ -45,10 +44,8 @@ export default function ImageEditing() {
                 Alert.alert('Failed to send', e?.message ?? 'Unknown error');
               }
             }}
-            style={{ backgroundColor: suggestion.trim() ? colors.PRIMARY : '#222', padding: 12, borderRadius: 10, alignSelf: 'stretch' }}
-          >
-            <Text style={{ color: '#000', fontWeight: '700' }}>Send</Text>
-          </Pressable>
+            style={{ alignSelf: 'stretch' }}
+          />
         </View>
       </View>
     </View>

@@ -76,6 +76,19 @@
     "setupFilesAfterEnv": [
       "<rootDir>/test/setup.ts"
     ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1"
+    },
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "<rootDir>/backend/",
+      "<rootDir>/.eas-inspect",
+      "<rootDir>/.eas-inspect-pre"
+    ],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/.eas-inspect",
+      "<rootDir>/.eas-inspect-pre"
+    ],
     "transformIgnorePatterns": [
       "node_modules/(?!((jest-)?react-native|@react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|expo-.*|@expo/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|react-native-reanimated)/)"
     ]

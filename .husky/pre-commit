@@ -9,5 +9,9 @@ npm test -- --ci || exit 1
 
 # 3) Run backend tests
 if [ -d backend ]; then
-  (cd backend && npm test -- --ci) || exit 1
+  if [ -x backend/node_modules/.bin/jest ]; then
+    (cd backend && npm test -- --ci) || exit 1
+  else
+    echo "[husky] Skipping backend tests (install dev deps to enable)"
+  fi
 fi

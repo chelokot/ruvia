@@ -2,6 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { View, Text, Image, Pressable, Alert, ScrollView } from 'react-native';
 import * as colors from '@/theme/theme';
+import PrimaryButton from '@/components/ui/PrimaryButton';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { getStyleRowsByKey } from '@/data/styles';
@@ -142,9 +143,7 @@ export default function Upload() {
         {imgUri && (
           <Image source={{ uri: imgUri }} style={{ width: '100%', height: 300, borderRadius: 12 }} resizeMode="cover" />
         )}
-        <Pressable disabled={!imgUri || loading} onPress={startGenerating} accessibilityRole="button" style={{ opacity: !imgUri || loading ? 0.6 : 1, backgroundColor: colors.PRIMARY, padding: 14, borderRadius: 12, alignItems: 'center' }}>
-          <Text style={{ color: '#000', fontWeight: '700' }}>{loading ? 'Generating...' : 'Start generating'}</Text>
-        </Pressable>
+        <PrimaryButton title={loading ? 'Generating...' : 'Start generating'} onPress={startGenerating} disabled={!imgUri || loading} />
         <Text style={{ color: '#666', textAlign: 'center' }}>Results will be saved in the app folder automatically.</Text>
       </View>
     </ScrollView>
