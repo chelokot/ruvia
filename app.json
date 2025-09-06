@@ -3,7 +3,7 @@
     "name": "Ruvia",
     "slug": "ruvia",
     "scheme": "ruvia",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -39,14 +39,17 @@
     "android": {
       "package": "com.ruvia.app",
       "permissions": [
-        "android.permission.CAMERA"
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
       ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon-foreground.png",
         "backgroundColor": "#000000",
         "monochromeImage": "./assets/adaptive-icon-monochrome.png"
       },
-      "versionCode": 15
+      "versionCode": 16
     },
     "extra": {
       "router": {
@@ -56,6 +59,9 @@
         "projectId": "9cc32638-29cb-42e9-8e8e-400de56278c5"
       }
     },
-    "owner": "chipichapacorp"
+    "owner": "chipichapacorp",
+    "ios": {
+      "bundleIdentifier": "com.ruvia.app"
+    }
   }
 }
