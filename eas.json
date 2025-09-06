@@ -14,11 +14,18 @@
     "production": {
       "autoIncrement": false,
       "android": {
-        "gradleCommand": ":app:bundleRelease"
+        "gradleCommand": ":app:bundlePlayRelease"
       }
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./play-service-account.json",
+        "track": "internal",
+        "releaseStatus": "draft",
+        "changesNotSentForReview": true
+      }
+    }
   }
 }

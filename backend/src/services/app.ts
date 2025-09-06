@@ -10,6 +10,7 @@ import { type Database, initDatabaseClient } from "./database.js";
 import { initFirebase, injectFirebaseCredentials } from "./firebase.js";
 import type { User } from "./user.js";
 import { purchaseRoute } from "../routes/purchase.js";
+import { deleteAccountRoute } from "../routes/deleteAccount.js";
 
 export type AppEnv<C = Record<string, unknown>> = {
   Variables: C & {
@@ -46,6 +47,8 @@ export function buildApp() {
   app.route("/session", new Hono<AppEnv>().use("*", authMiddleware).route("/", sessionRoute));
   app.route("/generate", new Hono<AppEnv>().use("*", authMiddleware).route("/", generateRoute));
   app.route("/purchase", new Hono<AppEnv>().use("*", authMiddleware).route("/", purchaseRoute));
+  // Public endpoint for deletion requests (no auth required)
+  app.route("/delete-account", new Hono<AppEnv>().route("/", deleteAccountRoute));
 
   return app;
 }

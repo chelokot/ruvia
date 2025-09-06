@@ -41,6 +41,6 @@ export async function finishTransactionAsync(purchase: RNIap.Purchase) {
 }
 
 export async function purchaseItemAsync(sku: string) {
-  await RNIap.requestPurchase({ sku, andDangerouslyFinishTransactionAutomatically: false });
+  // Use simple signature for broader compatibility on Android
+  await RNIap.requestPurchase(sku);
 }
-

@@ -1,6 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, ActivityIndicator, Animated, Easing, Platform } from 'react-native';
+import { View, Text, ToastAndroid, Animated, Easing, Platform, Alert } from 'react-native';
+import * as colors from '@/theme/theme';
 import { useAuth } from '@/hooks/useAuth';
 import { generateStyles } from '@/lib/api';
 
@@ -64,7 +65,15 @@ export default function Generating() {
         // On web we can keep URLs and let user save/share; on native too
         router.replace({ pathname: '/results', params: { urls: JSON.stringify(urls) } });
       } catch (e: any) {
-        setError(e.message ?? 'Generation failed');
+        const msg = e?.message ?? 'Failed to generate';
+        setError(msg);
+        if (Platform.OS === 'android') {
+          ToastAndroid.show(msg, ToastAndroid.SHORT);
+        } else {
+          Alert.alert('Generation failed', msg);
+        }
+        // Leave the page to avoid "loading forever" UX
+        router.back();
       }
     })();
   }, [prompt, imgUri, router, user]);
@@ -76,18 +85,10 @@ export default function Generating() {
       {!!subStatus && <Text style={{ color: '#666', marginBottom: 16 }}>{subStatus}</Text>}
 
       <View style={{ height: 10, backgroundColor: '#111', borderRadius: 999, overflow: 'hidden' }}>
-        <Animated.View style={{ height: '100%', width: barWidth, backgroundColor: '#00e5ff' }} />
+        <Animated.View style={{ height: '100%', width: barWidth, backgroundColor: colors.PRIMARY }} />
       </View>
 
-      <View style={{ alignItems: 'center', marginTop: 24 }}>
-        <View style={{ transform: [{ scale: 1.6 }] }}>
-          <ActivityIndicator size="large" color="#00e5ff" />
-        </View>
-      </View>
-
-      {error && (
-        <Text style={{ color: '#f43f5e', marginTop: 16 }}>{error}</Text>
-      )}
+      {/* Keep the UI clean: single progress indicator, no extra spinners */}
     </View>
   );
 }

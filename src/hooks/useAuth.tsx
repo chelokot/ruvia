@@ -2,7 +2,7 @@ import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndP
 import { auth, db, googleProvider } from '@/lib/firebase';
 import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { ensureSession } from '@/lib/api';
+import { ensureSession, getSessionCredits } from '@/lib/api';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
 import { Platform } from 'react-native';
@@ -47,6 +47,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
           const token = await u.getIdToken();
           await ensureSession(token);
+          // Proactively reflect server-side initial credits for brand new users
+          if (!userDoc) {
+            const credits = await getSessionCredits(token);
+            setUserDoc((prev) => prev ?? { credits, generationCount: 0, name: u.displayName ?? undefined });
+          }
         } catch {}
         const ref = doc(db, 'users', u.uid);
         const off = onSnapshot(ref, (snap) => {
@@ -79,7 +84,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     // Native via AuthSession
-    const res = await promptAsync();
+    // Ensure the request has finished loading to avoid runtime error
+    if (!request) {
+      throw new Error('Google auth is initializing, please try again');
+    }
+    const res = await promptAsync({ useProxy: true });
     if (res?.type === 'success' && res.authentication?.idToken) {
       const credential = GoogleAuthProvider.credential(res.authentication.idToken);
       await signInWithCredential(auth, credential);
