@@ -3,7 +3,7 @@
     "name": "Ruvia",
     "slug": "ruvia",
     "scheme": "ruvia",
-    "version": "0.1.12",
+    "version": "0.1.13",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -34,7 +34,9 @@
         }
       ],
       "expo-camera",
-      "expo-media-library"
+      "expo-media-library",
+      "expo-font",
+      "expo-web-browser"
     ],
     "android": {
       "package": "com.ruvia.app",
@@ -49,7 +51,7 @@
         "backgroundColor": "#000000",
         "monochromeImage": "./assets/adaptive-icon-monochrome.png"
       },
-      "versionCode": 19
+      "versionCode": 20
     },
     "extra": {
       "router": {
