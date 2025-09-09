@@ -14,7 +14,7 @@
     "production": {
       "autoIncrement": false,
       "android": {
-        "gradleCommand": ":app:bundlePlayRelease"
+        "gradleCommand": ":app:bundleRelease"
       }
     }
   },
