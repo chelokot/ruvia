@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "199411765365-iq0d5puu73tiv9nmubetjvc02f5bkov0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ruvia.app",
+            "certificate_hash": "a6aea21dd06c7d835def4668c4190312231748aa"
+          }
+        },
+        {
+          "client_id": "199411765365-pr9mdfrv9de19apqri0irvgnqvaag55c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ruvia.app",
+            "certificate_hash": "4860725d609e94e5fcf24ab76a06adf977cf9495"
+          }
+        },
+        {
           "client_id": "199411765365-rva49rmlkka0drkcs2cfco24dmo741i3.apps.googleusercontent.com",
           "client_type": 3
         }
