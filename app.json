@@ -3,7 +3,7 @@
     "name": "Ruvia",
     "slug": "ruvia",
     "scheme": "ruvia",
-    "version": "0.1.20",
+    "version": "0.1.21",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -51,7 +51,8 @@
         "backgroundColor": "#000000",
         "monochromeImage": "./assets/adaptive-icon-monochrome.png"
       },
-      "versionCode": 23
+      "versionCode": 24,
+      "googleServicesFile": "./google-services.json"
     },
     "extra": {
       "router": {
