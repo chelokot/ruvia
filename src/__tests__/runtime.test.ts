@@ -12,4 +12,10 @@ describe('getApiBase', () => {
     delete process.env.EXPO_PUBLIC_API_BASE_URL;
     expect(getApiBase()).toBe('https://api.ruvia.art');
   });
+
+  it('defaults to production when no window', () => {
+    (global as any).window = undefined;
+    delete process.env.EXPO_PUBLIC_API_BASE_URL;
+    expect(getApiBase()).toBe('https://api.ruvia.art');
+  });
 });

@@ -71,11 +71,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signupEmail(email: string, password: string) {
-    await createUserWithEmailAndPassword(auth, email, password);
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    const token = await cred.user.getIdToken();
+    await ensureSession(token);
   }
 
   async function signinEmail(email: string, password: string) {
-    await signInWithEmailAndPassword(auth, email, password);
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    const token = await cred.user.getIdToken();
+    await ensureSession(token);
   }
 
   async function signinGoogle() {
@@ -88,10 +92,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!request) {
       throw new Error('Google auth is initializing, please try again');
     }
-    const res = await promptAsync({ useProxy: true });
+    const res = await promptAsync({ useProxy: false });
     if (res?.type === 'success' && res.authentication?.idToken) {
       const credential = GoogleAuthProvider.credential(res.authentication.idToken);
-      await signInWithCredential(auth, credential);
+      const cred = await signInWithCredential(auth, credential);
+      const token = await cred.user.getIdToken();
+      await ensureSession(token);
     } else {
       throw new Error('Google sign-in cancelled');
     }

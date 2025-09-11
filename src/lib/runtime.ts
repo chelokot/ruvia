@@ -13,6 +13,6 @@ export function getApiBase(): string {
     // For preview branches like feature-x.ruvia.art -> api-feature-x.ruvia.art
     return `https://api-${host}`;
   }
-  // Fallback: nothing configured, return empty (caller should handle)
-  return envBase;
+  // Fallback to production API
+  return 'https://api.ruvia.art';
 }
