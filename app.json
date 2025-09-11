@@ -3,7 +3,7 @@
     "name": "Ruvia",
     "slug": "ruvia",
     "scheme": "ruvia",
-    "version": "0.1.0",
+    "version": "0.1.27",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -17,8 +17,12 @@
         "expo-build-properties",
         {
           "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
             "extraGradleProperties": {
-              "REACT_NATIVE_IAP_STORE": "play"
+              "REACT_NATIVE_IAP_STORE": "play",
+              "RNIap_playBillingSdkVersion": "7.1.1",
+              "android.suppressUnsupportedCompileSdk": "35"
             }
           }
         }
@@ -31,19 +35,24 @@
       ],
       "expo-camera",
       "expo-media-library",
-      ["react-native-iap", { "paymentProvider": "Play Store" }]
+      "expo-font",
+      "expo-web-browser"
     ],
     "android": {
       "package": "com.ruvia.app",
       "permissions": [
-        "android.permission.CAMERA"
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
       ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon-foreground.png",
         "backgroundColor": "#000000",
         "monochromeImage": "./assets/adaptive-icon-monochrome.png"
       },
-      "versionCode": 2
+      "versionCode": 29,
+      "googleServicesFile": "./google-services.json"
     },
     "extra": {
       "router": {
@@ -53,6 +62,9 @@
         "projectId": "9cc32638-29cb-42e9-8e8e-400de56278c5"
       }
     },
-    "owner": "chipichapacorp"
+    "owner": "chipichapacorp",
+    "ios": {
+      "bundleIdentifier": "com.ruvia.app"
+    }
   }
 }

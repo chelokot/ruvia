@@ -1,0 +1,39 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# 1) Bump patch version (x.y.z -> x.y.z+1) in app.json, package.json, and Gradle
+echo "[husky] Bumping patch version (SemVer patch)"
+node scripts/bump-patch-version.js || exit 1
+
+# 2) Format staged files with Prettier (non-destructive)
+echo "[husky] Formatting staged files"
+node scripts/format-staged.js || exit 1
+
+# 3) Ensure lockfiles are in sync (auto-fix if needed)
+echo "[husky] Ensuring npm lockfiles"
+node scripts/ensure-locks.js || { echo "[husky] Lockfile check failed"; exit 1; }
+
+# 4) Bump Android version code in app.json (and local Gradle) and show result
+echo "[husky] Bumping Android versionCode"
+node scripts/bump-version-code.js || exit 1
+cat app.json | sed -n '1,80p' | rg -n 'versionCode' || true
+
+# 5) Run frontend tests (root)
+npm test -- --ci || exit 1
+
+# 6) Run backend tests
+if [ -d backend ]; then
+  if [ -x backend/node_modules/.bin/jest ]; then
+    (cd backend && npm test -- --ci) || exit 1
+  else
+    echo "[husky] Skipping backend tests (install dev deps to enable)"
+  fi
+fi
+
+# 7) Check that web build works
+echo "[husky] Checking web build"
+npm run build:web || exit 1
+
+# 8) Check that Android build works
+echo "[husky] Checking Android build"
+npm run build:android || exit 1

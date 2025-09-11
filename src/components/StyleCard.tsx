@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as colors from '@/theme/theme';
 import type { StyleItem } from '@/data/styles';
 
 type Props = {
@@ -32,7 +33,7 @@ export default memo(function StyleCard({ item, selected, onPress }: Props) {
               width: 24,
               height: 24,
               borderRadius: 12,
-              backgroundColor: '#00e5ff',
+              backgroundColor: colors.PRIMARY,
               justifyContent: 'center',
               alignItems: 'center',
             }}

@@ -88,3 +88,13 @@ jobs:
           name: app-production-aab
           path: artifacts/app.aab
           if-no-files-found: error
+
+      - name: Submit AAB to Google Play
+        env:
+          GOOGLE_PLAY_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
+        run: |
+          if [ -z "$GOOGLE_PLAY_SERVICE_ACCOUNT" ]; then
+            echo "GOOGLE_PLAY_SERVICE_ACCOUNT not set" && exit 1
+          fi
+          echo "$GOOGLE_PLAY_SERVICE_ACCOUNT" > play-service-account.json
+          eas submit --platform android --profile production --path artifacts/app.aab --non-interactive
