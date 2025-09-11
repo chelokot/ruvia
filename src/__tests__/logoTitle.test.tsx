@@ -8,6 +8,6 @@ describe('LogoTitle', () => {
     const tree = renderer.create(<LogoTitle />).root;
     const view = tree.findByType(View);
     const style = Array.isArray(view.props.style) ? view.props.style.find(s => s && 'gap' in s) : view.props.style;
-    expect(style.gap).toBe(4);
+    expect(style.gap).toBe(2);
   });
 });
