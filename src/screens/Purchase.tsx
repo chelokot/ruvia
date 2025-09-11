@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 // Loaded dynamically on Android to avoid web build issues
 // import * as InAppPurchases from 'expo-in-app-purchases';
 import { useAuth } from '@/hooks/useAuth';
+import PrimaryButton from '@/components/ui/PrimaryButton';
 
 type Plan = { sku: string; title: string; price: string; credits: number; save?: string };
 const STATIC_PLANS: Plan[] = [
