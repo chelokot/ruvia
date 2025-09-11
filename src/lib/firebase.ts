@@ -1,6 +1,7 @@
 import { initializeApp, getApps } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { initializeAuth, getReactNativePersistence, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -14,6 +15,8 @@ const firebaseConfig = {
 // Avoid initializing Firebase during static SSR/Expo export on the server.
 const isBrowser = typeof window !== 'undefined';
 const app = isBrowser && (getApps().length ? getApps()[0]! : initializeApp(firebaseConfig));
-export const auth = isBrowser ? getAuth(app as any) : (null as any);
+export const auth = isBrowser
+  ? initializeAuth(app as any, { persistence: getReactNativePersistence(AsyncStorage) })
+  : (null as any);
 export const db = isBrowser ? getFirestore(app as any) : (null as any);
 export const googleProvider = isBrowser ? new GoogleAuthProvider() : (null as any);
