@@ -92,8 +92,8 @@ android {
         applicationId 'com.ruvia.app'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 26
-        versionName "0.1.24"
+        versionCode 27
+        versionName "0.1.25"
     }
     signingConfigs {
         debug {

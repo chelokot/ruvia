@@ -88,10 +88,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     // Native via AuthSession
-    // Ensure the request has finished loading to avoid runtime error
-    if (!request) {
-      throw new Error('Google auth is initializing, please try again');
-    }
     const res = await promptAsync({ useProxy: false });
     if (res?.type === 'success' && res.authentication?.idToken) {
       const credential = GoogleAuthProvider.credential(res.authentication.idToken);
