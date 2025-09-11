@@ -1,6 +1,6 @@
 {
   "name": "ruvia",
-  "version": "0.1.25",
+  "version": "0.1.27",
   "private": true,
   "main": "index.js",
   "scripts": {
@@ -27,6 +27,7 @@
   "dependencies": {
     "@fal-ai/client": "^1.6.2",
     "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-native-google-signin/google-signin": "^16.0.0",
     "dotenv": "^17.2.2",
     "expo": "^54.0.0-preview.16",
     "expo-auth-session": "~7.0.7",

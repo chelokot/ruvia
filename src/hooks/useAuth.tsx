@@ -4,7 +4,7 @@ import { ReactNode, createContext, useContext, useEffect, useMemo, useState } fr
 import { doc, onSnapshot } from 'firebase/firestore';
 import { ensureSession, getSessionCredits } from '@/lib/api';
 import * as WebBrowser from 'expo-web-browser';
-import * as Google from 'expo-auth-session/providers/google';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { Platform } from 'react-native';
 
 type UserDoc = {
@@ -28,17 +28,15 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 WebBrowser.maybeCompleteAuthSession();
+GoogleSignin.configure({
+  webClientId: "199411765365-rva49rmlkka0drkcs2cfco24dmo741i3.apps.googleusercontent.com",
+  offlineAccess: true,
+});
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [userDoc, setUserDoc] = useState<UserDoc | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-    androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
-    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
-  });
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
@@ -84,22 +82,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signinGoogle() {
     if (Platform.OS === 'web') {
-      await signInWithPopup(auth, googleProvider);
-      return;
-    }
-    // Native via AuthSession
-    const res = await promptAsync({ useProxy: false });
-    if (res?.type === 'success' && res.authentication?.idToken) {
-      const credential = GoogleAuthProvider.credential(res.authentication.idToken);
-      const cred = await signInWithCredential(auth, credential);
+      const cred = await signInWithPopup(auth, googleProvider);
       const token = await cred.user.getIdToken();
       await ensureSession(token);
-    } else {
+      return;
+    }
+
+    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+
+    const userInfo = await GoogleSignin.signIn()
+    if (userInfo.type == 'cancelled') {
       throw new Error('Google sign-in cancelled');
     }
+    const googleCred = GoogleAuthProvider.credential(userInfo.data.idToken);
+    const cred = await signInWithCredential(auth, googleCred);
+    const token = await cred.user.getIdToken();
+    await ensureSession(token);
   }
 
   async function logout() {
+    try { await GoogleSignin.signOut(); } catch { }
     await signOut(auth);
   }
 
