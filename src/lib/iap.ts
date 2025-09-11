@@ -41,6 +41,6 @@ export async function finishTransactionAsync(purchase: RNIap.Purchase) {
 }
 
 export async function purchaseItemAsync(sku: string) {
-  // Use simple signature for broader compatibility on Android
-  await RNIap.requestPurchase(sku);
+  // Use object signature to satisfy modern react-native-iap expectations
+  await RNIap.requestPurchase({ skus: [sku] });
 }

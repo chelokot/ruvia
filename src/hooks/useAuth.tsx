@@ -39,29 +39,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let off: (() => void) | undefined;
     const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
       if (u) {
         try {
           const token = await u.getIdToken();
           await ensureSession(token);
-          // Proactively reflect server-side initial credits for brand new users
-          if (!userDoc) {
-            const credits = await getSessionCredits(token);
-            setUserDoc((prev) => prev ?? { credits, generationCount: 0, name: u.displayName ?? undefined });
-          }
+          // Show initial credits immediately while waiting for Firestore
+          setUserDoc((prev) => prev ?? { credits: 1, generationCount: 0, name: u.displayName ?? undefined });
+          const credits = await getSessionCredits(token);
+          setUserDoc((prev) => ({ ...(prev ?? { generationCount: 0, name: u.displayName ?? undefined }), credits }));
         } catch {}
         const ref = doc(db, 'users', u.uid);
-        const off = onSnapshot(ref, (snap) => {
+        off = onSnapshot(ref, (snap) => {
           if (snap.exists()) setUserDoc(snap.data() as UserDoc);
         });
-        return () => off();
       } else {
         setUserDoc(null);
+        off?.();
+        off = undefined;
       }
       setLoading(false);
     });
-    return unsub;
+    return () => {
+      off?.();
+      unsub();
+    };
   }, []);
 
   async function refreshUserDoc() {
