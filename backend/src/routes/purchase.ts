@@ -38,9 +38,20 @@ export const purchaseRoute = new Hono<AuthorizedAppEnv>().post(
     try {
       const res: any = await verifyProductPurchase({ packageName: pkg, productId: sku, token });
       // purchaseState: 0 (purchased), 1 (canceled), 2 (pending)
-      if (res.purchaseState !== 0) return c.json({ ok: false, error: "purchase not completed" }, 400);
+      if (res.purchaseState !== 0) {
+        console.warn("purchase not completed", { sku, purchaseState: res.purchaseState, acknowledgmentState: res.acknowledgementState });
+        return c.json({ ok: false, error: "purchase not completed" }, 400);
+      }
       // Optional: developerPayload / obfuscatedAccountId check could be added later
     } catch (e) {
+      const err = e as any;
+      console.error("verifyProductPurchase failed", {
+        sku,
+        tokenSuffix: token.slice(-12),
+        message: err?.message,
+        responseStatus: err?.code || err?.response?.status,
+        responseData: err?.response?.data ?? err?.errors,
+      });
       return c.json({ ok: false, error: "verification failed" }, 400);
     }
 
