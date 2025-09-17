@@ -9,7 +9,7 @@ export async function connectAsync() {
 }
 
 export async function getProductsAsync(productIds: string[]) {
-  const results = await RNIap.getProducts(productIds);
+  const results = await RNIap.fetchProducts({ skus: productIds, type: 'inapp' });
   return results;
 }
 
@@ -41,6 +41,5 @@ export async function finishTransactionAsync(purchase: RNIap.Purchase) {
 }
 
 export async function purchaseItemAsync(sku: string) {
-  // Use object signature to satisfy modern react-native-iap expectations
-  await RNIap.requestPurchase({ skus: [sku] });
+  await RNIap.requestPurchase({ request: { android: { skus: [sku] } }, type: 'inapp' });
 }
