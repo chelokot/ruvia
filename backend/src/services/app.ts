@@ -11,6 +11,7 @@ import { initFirebase, injectFirebaseCredentials } from "./firebase.js";
 import type { User } from "./user.js";
 import { purchaseRoute } from "../routes/purchase.js";
 import { deleteAccountRoute } from "../routes/deleteAccount.js";
+import { monitoringMiddleware } from "../middleware/monitoring.js";
 
 export type AppEnv<C = Record<string, unknown>> = {
   Variables: C & {
@@ -44,11 +45,11 @@ export function buildApp() {
     .use("*", createInitMiddleware(variables));
 
   // Protected routes only: attach auth on sub-routers to avoid blocking OPTIONS
-  app.route("/session", new Hono<AppEnv>().use("*", authMiddleware).route("/", sessionRoute));
-  app.route("/generate", new Hono<AppEnv>().use("*", authMiddleware).route("/", generateRoute));
-  app.route("/purchase", new Hono<AppEnv>().use("*", authMiddleware).route("/", purchaseRoute));
+  app.route("/session", new Hono<AppEnv>().use("*", authMiddleware).use("*", monitoringMiddleware).route("/", sessionRoute));
+  app.route("/generate", new Hono<AppEnv>().use("*", authMiddleware).use("*", monitoringMiddleware).route("/", generateRoute));
+  app.route("/purchase", new Hono<AppEnv>().use("*", authMiddleware).use("*", monitoringMiddleware).route("/", purchaseRoute));
   // Public endpoint for deletion requests (no auth required)
-  app.route("/delete-account", new Hono<AppEnv>().route("/", deleteAccountRoute));
+  app.route("/delete-account", new Hono<AppEnv>().use("*", monitoringMiddleware).route("/", deleteAccountRoute));
 
   return app;
 }

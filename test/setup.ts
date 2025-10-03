@@ -7,3 +7,22 @@ jest.mock('@expo/vector-icons', () => ({
 }));
 // Ensure React Native Modal renders children in tests
 jest.mock('react-native/Libraries/Modal/Modal', () => 'Modal');
+jest.mock('sentry-expo', () => ({
+  init: jest.fn(),
+  Native: {
+    setUser: jest.fn(),
+    addBreadcrumb: jest.fn(),
+    withScope: (callback: (scope: any) => void) => {
+      const scope = {
+        setTag: jest.fn(),
+        setExtra: jest.fn(),
+        setContext: jest.fn(),
+        setUser: jest.fn(),
+      };
+      callback(scope);
+    },
+    captureMessage: jest.fn(),
+    captureException: jest.fn(),
+  },
+}));
+jest.mock('expo-constants', () => ({ expoConfig: {} }));

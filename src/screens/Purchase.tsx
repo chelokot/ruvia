@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as colors from '@/theme/theme';
 import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
+import { beginPurchaseFlow, captureMonitoringError, createCorrelationId, logPurchaseStage } from '@/lib/monitoring';
 // Loaded dynamically on Android to avoid web build issues
 // import * as InAppPurchases from 'expo-in-app-purchases';
 import { useAuth } from '@/hooks/useAuth';
@@ -111,6 +112,7 @@ export default function Purchase() {
   const [plans, setPlans] = useState<Plan[]>(STATIC_PLANS);
   const [loading, setLoading] = useState(false);
   const iapRef = useRef<any | null>(null);
+  const purchaseFlowRef = useRef<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -148,12 +150,27 @@ export default function Purchase() {
       remove = IAP.setPurchaseListener(async (purchase: any) => {
         try {
           if (!user) throw new Error('Not signed in');
+          const tokenSuffix = purchase.purchaseToken ? String(purchase.purchaseToken).slice(-12) : undefined;
+          const currentSku = purchase.productId ?? selected;
+          if (!purchaseFlowRef.current) {
+            purchaseFlowRef.current = createCorrelationId();
+            logPurchaseStage({ stage: 'recovered', correlationId: purchaseFlowRef.current, sku: currentSku, tokenSuffix });
+          }
+          logPurchaseStage({ stage: 'listener_received', correlationId: purchaseFlowRef.current, sku: currentSku, tokenSuffix, status: String(purchase.purchaseState ?? 'unknown') });
           const idToken = await user.getIdToken();
-          await confirmPurchase({ sku: purchase.productId, purchaseToken: purchase.purchaseToken! }, idToken);
+          logPurchaseStage({ stage: 'backend_request', correlationId: purchaseFlowRef.current, sku: currentSku, tokenSuffix });
+          const response = await confirmPurchase({ sku: currentSku, purchaseToken: purchase.purchaseToken!, correlationId: purchaseFlowRef.current }, idToken);
+          logPurchaseStage({ stage: 'backend_response', correlationId: purchaseFlowRef.current, sku: currentSku, tokenSuffix, status: response?.ok ? 'ok' : 'error', extra: response ? { ok: response.ok, credits: response.credits, alreadyProcessed: response.alreadyProcessed ?? false } : undefined });
           await IAP.finishTransactionAsync(purchase);
+          logPurchaseStage({ stage: 'finish_transaction', correlationId: purchaseFlowRef.current, sku: currentSku, tokenSuffix, status: 'completed' });
+          purchaseFlowRef.current = null;
           Alert.alert('Purchase', 'Thanks! Your credits will update shortly.');
         } catch (e: any) {
+          const failureSuffix = purchase.purchaseToken ? String(purchase.purchaseToken).slice(-12) : undefined;
+          logPurchaseStage({ stage: 'listener_failed', correlationId: purchaseFlowRef.current ?? createCorrelationId(), sku: purchase.productId ?? selected, status: 'error', error: e?.message ?? 'unknown', tokenSuffix: failureSuffix });
+          captureMonitoringError(e, { source: 'purchaseListener', sku: purchase.productId, tokenSuffix: failureSuffix }, purchaseFlowRef.current ?? undefined);
           Alert.alert('Purchase failed', e?.message ?? 'Please try again later');
+          purchaseFlowRef.current = null;
         }
       });
     })();
@@ -169,10 +186,15 @@ export default function Purchase() {
         return;
       }
       setLoading(true);
+      purchaseFlowRef.current = beginPurchaseFlow(p.sku);
       const IAP = iapRef.current ?? (await import('@/lib/iap'));
       await IAP.purchaseItemAsync(p.sku);
+      logPurchaseStage({ stage: 'iap_request_sent', correlationId: purchaseFlowRef.current, sku: p.sku, status: 'pending' });
     } catch (e: any) {
+      logPurchaseStage({ stage: 'iap_request_failed', correlationId: purchaseFlowRef.current ?? createCorrelationId(), sku: p.sku, status: 'error', error: e.message ?? 'unknown' });
+      captureMonitoringError(e, { source: 'purchaseRequest', sku: p.sku }, purchaseFlowRef.current ?? undefined);
       Alert.alert('Purchase failed', e.message ?? 'Please try again later');
+      purchaseFlowRef.current = null;
     } finally {
       setLoading(false);
     }

@@ -3,6 +3,7 @@ import { auth, db, googleProvider } from '@/lib/firebase';
 import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { ensureSession, getSessionCredits } from '@/lib/api';
+import { setMonitoringUser } from '@/lib/monitoring';
 import * as WebBrowser from 'expo-web-browser';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { Platform } from 'react-native';
@@ -67,6 +68,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       unsub();
     };
   }, []);
+
+  useEffect(() => {
+    setMonitoringUser(user ? { id: user.uid, email: user.email ?? undefined, name: user.displayName ?? undefined } : null);
+  }, [user]);
 
   async function refreshUserDoc() {
     // no-op; Firestore subscription keeps userDoc fresh

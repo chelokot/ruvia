@@ -1,5 +1,6 @@
 import { Platform } from 'react-native';
 import * as RNIap from 'react-native-iap';
+import { captureMonitoringError, createCorrelationId, logPurchaseStage } from '@/lib/monitoring';
 
 export type Product = RNIap.Product;
 
@@ -28,8 +29,10 @@ export function setPurchaseListener(listener: PurchaseListener) {
       // no-op; let caller handle errors
     }
   });
-  errorSub = RNIap.purchaseErrorListener((_err) => {
-    // Optionally surface errors
+  errorSub = RNIap.purchaseErrorListener((error) => {
+    const correlationId = createCorrelationId();
+    logPurchaseStage({ stage: 'iap_error', correlationId, status: String(error?.code ?? 'unknown'), error: (error as any)?.message ?? 'unknown' });
+    captureMonitoringError(error, { source: 'iapPurchaseError', code: (error as any)?.code }, correlationId);
   });
   return { remove() { purchaseSub?.remove(); errorSub?.remove(); purchaseSub = null; errorSub = null; } };
 }
