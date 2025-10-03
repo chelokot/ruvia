@@ -46,7 +46,7 @@ export function initMonitoring() {
   if (enabled) return true;
   const dsn = readDsn();
   if (!dsn) return false;
-  Sentry.init({ dsn, environment: readEnvironment(), tracesSampleRate: readTraceRate(), autoSessionTracking: false });
+  Sentry.init({ dsn, environment: readEnvironment(), tracesSampleRate: readTraceRate() });
   enabled = true;
   return true;
 }
@@ -61,16 +61,14 @@ export function createCorrelationId() {
 
 export async function withRequestScope<T>(context: RequestContext, run: () => Promise<T>) {
   if (!enabled) return run();
-  return Sentry.runWithAsyncContext(async () => {
-    Sentry.configureScope((scope) => {
-      if (context.correlationId) scope.setTag("purchaseCorrelationId", context.correlationId);
-      if (context.userId) scope.setUser({ id: context.userId });
-      if (context.requestId) scope.setTag("requestId", context.requestId);
-      if (context.method) scope.setTag("requestMethod", context.method);
-      if (context.path) scope.setTag("requestPath", context.path);
-      if (context.sku) scope.setTag("purchaseSku", context.sku);
-      if (context.tokenSuffix) scope.setExtra("purchaseTokenSuffix", context.tokenSuffix);
-    });
+  return Sentry.withScope(async (scope) => {
+    if (context.correlationId) scope.setTag("purchaseCorrelationId", context.correlationId);
+    if (context.userId) scope.setUser({ id: context.userId });
+    if (context.requestId) scope.setTag("requestId", context.requestId);
+    if (context.method) scope.setTag("requestMethod", context.method);
+    if (context.path) scope.setTag("requestPath", context.path);
+    if (context.sku) scope.setTag("purchaseSku", context.sku);
+    if (context.tokenSuffix) scope.setExtra("purchaseTokenSuffix", context.tokenSuffix);
     try {
       return await run();
     } catch (error) {

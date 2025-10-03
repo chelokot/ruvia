@@ -17,8 +17,8 @@ try {
   let gradle = fs.readFileSync(gradlePath, 'utf8');
   gradle = gradle.replace(/versionCode\s+\d+/g, `versionCode ${next}`);
   fs.writeFileSync(gradlePath, gradle);
-  execSync('git add android/app/build.gradle', { stdio: 'ignore' });
+  execSync('git add android/app/build.gradle', { stdio: 'inherit' });
 } catch {}
 
-execSync('git add app.json');
+execSync('git add app.json', { stdio: 'inherit' });
 console.log(`Android versionCode bumped to ${next}`);
