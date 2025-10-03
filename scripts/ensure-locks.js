@@ -4,12 +4,12 @@ const { existsSync } = require('fs');
 const path = require('path');
 
 function run(cmd, opts = {}) {
-  return execSync(cmd, { stdio: 'inherit', ...opts });
+  execSync(cmd, { stdio: 'inherit', ...opts });
 }
 
 function tryRun(cmd, opts = {}) {
   try {
-    execSync(cmd, { stdio: 'pipe', ...opts });
+    execSync(cmd, { stdio: 'inherit', ...opts });
     return true;
   } catch {
     return false;
@@ -31,7 +31,6 @@ function ensureLock(dir) {
   console.log(`${prefix} Lockfile mismatch. Running: ${installCmd}`);
   run(installCmd, { cwd });
 
-  // stage updated lockfile if in a git repo
   try {
     run('git add package-lock.json', { cwd });
     console.log(`${prefix} Staged updated package-lock.json`);
@@ -46,7 +45,7 @@ function ensureLock(dir) {
   return false;
 }
 
-let ok = ensureLock('.')
+let ok = ensureLock('.');
 if (existsSync('backend/package.json')) {
   ok = ensureLock('backend') && ok;
 }

@@ -90,6 +90,7 @@ export default function ProfilePictures() {
 
   const [selected, setSelected] = useState<Record<string, StyleItem>>({});
   const selectedCount = Object.keys(selected).length;
+  const [barHeight, setBarHeight] = useState(0);
 
   function toggle(item: StyleItem) {
     if (isNew && selectedCount === 0) {
@@ -132,7 +133,7 @@ export default function ProfilePictures() {
         </View>
       </View>
 
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16 }}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16, paddingBottom: 16 + barHeight }}>
         {rows.map((row) => (
           <StyleRow key={row.id} row={row} selectedIds={new Set(Object.keys(selected))} onToggle={toggle} />)
         )}
@@ -140,7 +141,7 @@ export default function ProfilePictures() {
 
       {selectedCount > 0 && !isNew && (
         // Inline to avoid import loop w/ web SSR
-        <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0 }}>
+        <View onLayout={(e) => setBarHeight(e.nativeEvent.layout.height)} style={{ position: 'absolute', left: 0, right: 0, bottom: 0 }}>
           {/* @ts-ignore */}
           {require('@/components/BottomSelectionBar').default({
             count: selectedCount,

@@ -1,9 +1,11 @@
-import { Stack } from "expo-router";
 import Providers from "./providers";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useEffect } from "react";
 import { Platform, StatusBar } from "react-native";
 import "react-native-reanimated";
+import { initMonitoring } from "@/lib/monitoring";
+
+initMonitoring();
 
 export default function RootLayout() {
   useEffect(() => {

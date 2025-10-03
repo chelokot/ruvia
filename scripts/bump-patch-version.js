@@ -14,7 +14,9 @@ function bumpPatch(version) {
 }
 
 function stage(file) {
-  try { execSync(`git add ${JSON.stringify(file)}`); } catch {}
+  try {
+    execSync(`git add ${JSON.stringify(file)}`, { stdio: 'inherit' });
+  } catch {}
 }
 
 const root = path.join(__dirname, '..');
@@ -48,6 +50,21 @@ try {
     fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
     stage(pkgPath);
     console.log(`[version] package.json version: ${current} -> ${next}`);
+
+    const lockPath = path.join(root, 'package-lock.json');
+    if (fs.existsSync(lockPath)) {
+      const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
+      const previousLockVersion = lock?.version;
+      lock.version = next;
+      if (lock?.packages && lock.packages['']) {
+        lock.packages[''].version = next;
+      }
+      fs.writeFileSync(lockPath, JSON.stringify(lock, null, 2) + '\n');
+      stage(lockPath);
+      if (previousLockVersion !== next) {
+        console.log(`[version] package-lock.json version: ${previousLockVersion} -> ${next}`);
+      }
+    }
   } else {
     console.warn(`[version] package.json version not bumped (unrecognized): ${current}`);
   }
@@ -71,4 +88,3 @@ try {
     }
   }
 } catch {}
-

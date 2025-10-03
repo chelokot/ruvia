@@ -18,19 +18,23 @@ echo "[husky] Bumping Android versionCode"
 node scripts/bump-version-code.js || exit 1
 cat app.json | sed -n '1,80p' | rg -n 'versionCode' || true
 
-# 5) Run frontend tests (root)
-npm test -- --ci || exit 1
+echo "[husky] Running frontend tests"
+npm test -- --ci --runInBand || exit 1
 
 # 6) Run backend tests
+echo "[husky] Running backend tests"
 if [ -d backend ]; then
   if [ -x backend/node_modules/.bin/jest ]; then
-    (cd backend && npm test -- --ci) || exit 1
+    (cd backend && npm test -- --ci --runInBand) || exit 1
   else
     echo "[husky] Skipping backend tests (install dev deps to enable)"
   fi
 fi
 
 # 7) Check that web build works
+echo "[husky] Checking backend type safety"
+npm run build --prefix backend || exit 1
+
 echo "[husky] Checking web build"
 npm run build:web || exit 1
 

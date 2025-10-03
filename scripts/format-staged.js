@@ -1,15 +1,41 @@
 #!/usr/bin/env node
-const { execSync } = require('child_process');
+const { spawnSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+const prettier = require('prettier');
 
-function out(cmd) {
-  return execSync(cmd, { stdio: 'pipe', encoding: 'utf8' }).trim();
+function out(command, args) {
+  const res = spawnSync(command, args, { stdio: 'pipe', encoding: 'utf8' });
+  if (res.error) throw res.error;
+  if (typeof res.status === 'number' && res.status !== 0) {
+    process.stdout.write(res.stdout ?? '');
+    process.stderr.write(res.stderr ?? '');
+    process.exit(res.status);
+  }
+  return (res.stdout ?? '').trim();
 }
-function run(cmd) {
-  execSync(cmd, { stdio: 'inherit' });
+function tryRun(command, args) {
+  const res = spawnSync(command, args, { stdio: 'inherit', encoding: 'utf8' });
+  if (res.error) return res.error;
+  if (typeof res.status === 'number' && res.status !== 0) {
+    process.exit(res.status);
+  }
+  return null;
 }
 
 // Collect staged files
-let files = out('git diff --name-only --cached');
+let files = (process.env.HUSKY_STAGED_FILES ?? '').trim();
+if (!files) {
+  try {
+    files = out('git', ['diff', '--name-only', '--cached']);
+  } catch (error) {
+    if (error && (error.code === 'EPERM' || error.errno === 'EPERM')) {
+      console.warn('[prettier] Unable to inspect staged files; skipping formatting.');
+      process.exit(0);
+    }
+    throw error;
+  }
+}
 if (!files) process.exit(0);
 
 const exts = [
@@ -23,15 +49,33 @@ const list = files
 
 if (list.length === 0) process.exit(0);
 
-// Run prettier on chunks to avoid long command lines
-const chunkSize = 50;
-for (let i = 0; i < list.length; i += chunkSize) {
-  const chunk = list.slice(i, i + chunkSize);
-  const args = chunk.map((f) => JSON.stringify(f)).join(' ');
-  run(`npx --no prettier --write ${args}`);
+const formatted = [];
+
+for (const file of list) {
+  if (!fs.existsSync(file)) continue;
+  const abs = path.resolve(file);
+  try {
+    const fileInfo = prettier.getFileInfo.sync(abs, { ignorePath: '.prettierignore' });
+    if (fileInfo.ignored || !fileInfo.inferredParser) continue;
+    const source = fs.readFileSync(abs, 'utf8');
+    const config = prettier.resolveConfig.sync(abs, { editorconfig: true }) ?? {};
+    const output = prettier.format(source, { ...config, filepath: abs });
+    if (output !== source) {
+      fs.writeFileSync(abs, output, 'utf8');
+      formatted.push(file);
+    }
+  } catch (error) {
+    console.warn(`[prettier] Skipped ${file}: ${error.message}`);
+  }
 }
 
-// Re-stage files after formatting
-run('git add ' + list.map((f) => JSON.stringify(f)).join(' '));
+if (formatted.length === 0) process.exit(0);
 
-console.log(`[prettier] Formatted ${list.length} staged file(s).`);
+const stageError = tryRun('git', ['add', ...formatted]);
+if (stageError && (stageError.code === 'EPERM' || stageError.errno === 'EPERM')) {
+  console.error('[prettier] Formatted files; please stage changes manually and re-commit.');
+  process.exit(1);
+}
+if (stageError) throw stageError;
+
+console.log(`[prettier] Formatted ${formatted.length} staged file(s).`);

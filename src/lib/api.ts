@@ -39,7 +39,7 @@ export async function generateStyles(req: GenerateFormRequest): Promise<Generate
   return res.json();
 }
 
-export type PurchasePayload = { sku: string; purchaseToken: string };
+export type PurchasePayload = { sku: string; purchaseToken: string; correlationId?: string };
 export async function confirmPurchase(payload: PurchasePayload, idToken: string) {
   const url = `${BASE}/purchase`;
   const res = await fetch(url, {

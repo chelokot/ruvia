@@ -10,6 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PROJECT_ID: ruvia-b758a
+      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+      SENTRY_ENVIRONMENT: production
+      SENTRY_TRACE_RATE: '1'
+      EXPO_PUBLIC_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+      EXPO_PUBLIC_ENVIRONMENT: production
+      EXPO_PUBLIC_SENTRY_TRACE_RATE: '1'
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_ORG: andrii-vlasenko
+      SENTRY_PROJECT: ruvia
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -49,6 +58,9 @@ jobs:
           {
             echo "FAL_KEY=${FAL_KEY}"
             echo "ANDROID_PACKAGE_NAME=${ANDROID_PACKAGE_NAME}"
+            if [ -n "$SENTRY_DSN" ]; then echo "SENTRY_DSN=${SENTRY_DSN}"; fi
+            if [ -n "$SENTRY_ENVIRONMENT" ]; then echo "SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}"; fi
+            if [ -n "$SENTRY_TRACE_RATE" ]; then echo "SENTRY_TRACE_RATE=${SENTRY_TRACE_RATE}"; fi
           } > backend/.env
 
       - name: Deploy Hosting + Functions (web + api targets)
@@ -70,6 +82,15 @@ jobs:
 
       - name: Start EAS cloud build (Android AAB)
         run: |
+          if [ -n "$SENTRY_DSN" ] && [ -z "$EXPO_PUBLIC_SENTRY_DSN" ]; then
+            export EXPO_PUBLIC_SENTRY_DSN="$SENTRY_DSN"
+          fi
+          if [ -n "$SENTRY_ENVIRONMENT" ] && [ -z "$EXPO_PUBLIC_ENVIRONMENT" ]; then
+            export EXPO_PUBLIC_ENVIRONMENT="$SENTRY_ENVIRONMENT"
+          fi
+          if [ -n "$SENTRY_TRACE_RATE" ] && [ -z "$EXPO_PUBLIC_SENTRY_TRACE_RATE" ]; then
+            export EXPO_PUBLIC_SENTRY_TRACE_RATE="$SENTRY_TRACE_RATE"
+          fi
           # Ensure managed workflow by removing native Android dir from the tarball
           rm -rf android
           mkdir -p artifacts

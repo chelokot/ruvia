@@ -1,6 +1,6 @@
 {
   "name": "ruvia",
-  "version": "0.1.28",
+  "version": "0.1.42",
   "private": true,
   "main": "index.js",
   "scripts": {
@@ -28,6 +28,7 @@
     "@fal-ai/client": "^1.6.2",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-google-signin/google-signin": "^16.0.0",
+    "@sentry/react-native": "^6.22.0",
     "dotenv": "^17.2.2",
     "expo": "^54.0.0-preview.16",
     "expo-auth-session": "~7.0.7",
@@ -58,6 +59,7 @@
     "react-native-svg": "15.12.1",
     "react-native-web": "0.21.1",
     "react-native-worklets": "~0.5.0",
+    "sentry-expo": "^7.2.0",
     "sharp": "^0.34.3"
   },
   "devDependencies": {

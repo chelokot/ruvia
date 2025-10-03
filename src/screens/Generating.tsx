@@ -1,6 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, ToastAndroid, Animated, Easing, Platform, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import * as colors from '@/theme/theme';
 import { useAuth } from '@/hooks/useAuth';
 import { generateStyles } from '@/lib/api';
@@ -79,16 +80,15 @@ export default function Generating() {
   }, [prompt, imgUri, router, user]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#000', paddingTop: 80, paddingHorizontal: 16 }}>
+    <View style={{ flex: 1, backgroundColor: '#000', padding: 16, alignItems: 'center', justifyContent: 'center' }}>
+      <Ionicons name="color-wand-outline" size={48} color={colors.PRIMARY} style={{ marginBottom: 24 }} />
       <Text style={{ color: '#fff', fontSize: 20, fontWeight: '800', marginBottom: 8 }}>Generating</Text>
-      <Text style={{ color: '#bbb', marginBottom: 4 }}>{status}</Text>
-      {!!subStatus && <Text style={{ color: '#666', marginBottom: 16 }}>{subStatus}</Text>}
+      <Text style={{ color: '#bbb', marginBottom: 4, textAlign: 'center' }}>{status}</Text>
+      {!!subStatus && <Text style={{ color: '#666', marginBottom: 16, textAlign: 'center' }}>{subStatus}</Text>}
 
-      <View style={{ height: 10, backgroundColor: '#111', borderRadius: 999, overflow: 'hidden' }}>
+      <View style={{ width: '100%', height: 10, backgroundColor: '#111', borderRadius: 999, overflow: 'hidden' }}>
         <Animated.View style={{ height: '100%', width: barWidth, backgroundColor: colors.PRIMARY }} />
       </View>
-
-      {/* Keep the UI clean: single progress indicator, no extra spinners */}
     </View>
   );
 }
